@@ -43,7 +43,8 @@ rules_proto_toolchains()
 
 new_git_repository(
    name = "CRoaring",
-   remote = "https://github.com/RoaringBitmap/CRoaring.git",
+   remote = "git@github.com:faststdb/CRoaring.git",
    tag = "v0.5.0",
    build_file = "thirdparty/CRoaring.BUILD",
 )
+
