@@ -40,3 +40,10 @@ http_archive(
 load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_proto_toolchains")
 rules_proto_dependencies()
 rules_proto_toolchains()
+
+new_git_repository(
+   name = "CRoaring",
+   remote = "https://github.com/RoaringBitmap/CRoaring.git",
+   tag = "v0.5.0",
+   build_file = "thirdparty/CRoaring.BUILD",
+)

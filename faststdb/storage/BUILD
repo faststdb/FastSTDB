@@ -42,6 +42,7 @@ cc_library(
   ],
   alwayslink = 1,
   deps = [
+    "@CRoaring//:libcroaring",
     "//faststdb/common:common",
     ":meta_volume_cc_proto",
   ],

@@ -3,16 +3,16 @@ licenses(["notice"])
 package(default_visibility = ["//visibility:public"])
 
 include_files = [
-    "include/zmq.h",
-    "include/zmq_utils.h",
+   "include/roaring/*.h",
+   "include/roaring/**/*.h",
 ]
 
 lib_files = [
-    "lib/libzmq.a",
+    "src/libroaring.a",
 ]
 
 genrule(
-    name = "libzmq-srcs",
+    name = "libcroaring-srcs",
     outs = include_files + lib_files,
     cmd = "\n".join([
         'export INSTALL_DIR=$$(pwd)/$(@D)',
