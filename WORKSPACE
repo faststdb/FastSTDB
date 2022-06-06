@@ -27,13 +27,6 @@ git_repository(
    tag = "20211102.0",
 )
 
-new_git_repository(
-   name = "CRoaring",
-   remote = "https://github.com/RoaringBitmap/CRoaring.git",
-   tag = "v0.5.0",
-   build_file = "thirdparty/CRoaring.BUILD",
-)
-
 http_archive(
     name = "rules_proto",
     sha256 = "66bfdf8782796239d3875d37e7de19b1d94301e8972b3cbd2446b332429b4df1",
