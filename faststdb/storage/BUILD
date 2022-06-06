@@ -79,3 +79,13 @@ cc_test(
   ],
 )
 
+cc_test(
+  name = "nbtree_test",
+  srcs = ["nbtree_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":storage",
+  ],
+)
+
