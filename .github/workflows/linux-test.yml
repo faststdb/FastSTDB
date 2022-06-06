@@ -1,0 +1,21 @@
+name: Ubuntu testing
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    name: Build and Test 
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: build 
+        run: |
+            bazel build ...
+      - name: test
+        run: |
+            bazel build ...
+

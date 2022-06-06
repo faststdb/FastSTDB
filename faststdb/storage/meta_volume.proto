@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+package faststdb.storage.proto;
+
+option cc_enable_arenas = true;
+
+message VolumeDesc {
+  uint32 id = 1;
+  string path = 2;
+  uint32 version = 3;
+  uint32 nblocks = 4;
+  uint32 capacity = 5;
+  uint32 generation = 6;
+}
+
+message MetaVolume {
+  repeated VolumeDesc volume_desc = 1;
+  string db_name = 2;
+}
