@@ -27,6 +27,8 @@ typedef u64 Timestamp;  //< Timestamp
 typedef u64 ParamId;    //< Parameter (or sequence) id
 
 #define FASTSTDB_MIN_TIMESTAMP 0ull
+#define FASTSTDB_MAX_TIMESTAMP (~0ull)
+#define FASTSTDB_LIMITS_MAX_EVENT_LEN 4096
 
 //! Payload data
 typedef struct {
@@ -74,6 +76,18 @@ typedef struct {
   ParamId   paramid;
   PData     payload;
 } Sample;
+
+inline bool same_value(double a, double b) {
+  union Bits {
+    double d;
+    u64 u;
+  };
+  Bits ba = {};
+  ba.d = a;
+  Bits bb = {};
+  bb.d = b;
+  return ba.u == bb.u;
+}
 
 namespace common {
 

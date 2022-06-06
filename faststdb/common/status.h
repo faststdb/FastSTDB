@@ -23,6 +23,9 @@ class Status {
     kBadData,
     kNoData,
     kUnavailable,
+    kNotFound,
+    kNoMemory,
+    kEAccess,
     kInternal,
     kUnknown
   };
@@ -77,6 +80,9 @@ class Status {
   static Status BadData(const std::string& msg) { return Status(kBadData, msg); }
   static Status NoData(const std::string& msg) { return Status(kNoData, msg); }
   static Status Unavailable(const std::string& msg) { return Status(kUnavailable, msg); }
+  static Status NotFound(const std::string& msg) { return Status(kNotFound, msg); }
+  static Status NoMemory(const std::string& msg) { return Status(kNoMemory, msg); }
+  static Status EAccess(const std::string& msg) { return Status(kEAccess, msg); }
   static Status Internal(const std::string& msg) { return Status(kInternal, msg); }
   static Status Unknown(const std::string& msg) { return Status(kUnknown, msg); }
 
