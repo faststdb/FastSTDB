@@ -14,7 +14,6 @@ jobs:
       - uses: actions/checkout@v2
       - name: build 
         run: |
-            apt-get install libboost-all-dev
             bazel build ...
       - name: test
         run: |
