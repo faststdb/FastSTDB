@@ -52,3 +52,11 @@ http_archive(
 
 load("//thirdparty:deps.bzl", "boost_deps")
 boost_deps()
+
+new_git_repository(
+	name = "robin-map",
+	build_file = "@//thirdparty:robin-map.BUILD",
+	tag = "v1.0.1",
+	remote = "https://github.com/Tessil/robin-map.git",
+)
+

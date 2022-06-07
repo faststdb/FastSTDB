@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "faststdb/common/rwlock.h"
+#include "tsl/robin_map.h"
 
 namespace faststdb {
 namespace common {
@@ -193,6 +194,8 @@ class ConsistentHash {
     return iter->second;
   }
 };
+
+// General hashmap
 
 }  // namespace common
 }  // namespace faststdb

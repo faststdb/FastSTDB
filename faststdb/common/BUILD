@@ -30,6 +30,7 @@ cc_library(
   deps = [
     "@glog",
     "@com_google_protobuf//:protobuf",
+    "@robin-map//:librobin-map",
   ],
 )
 

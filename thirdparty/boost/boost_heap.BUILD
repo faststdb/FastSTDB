@@ -22,5 +22,7 @@ cc_library(
       "@com_github_boost_concept_check//:concept_check",
       "@com_github_boost_preprocessor//:preprocessor",
       "@com_github_boost_type_traits//:type_traits",
+      "@com_github_boost_intrusive//:intrusive",
+      "@com_github_boost_move//:move",
   ]
 )
