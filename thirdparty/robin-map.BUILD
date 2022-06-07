@@ -2,9 +2,9 @@ licenses(["notice"])
 
 package(default_visibility = ["//visibility:public"])
 
-include_files = [
-   "include/tsl/robin_map.h",
-]
+include_files = glob([
+   "include/tsl/*.h",
+])
 
 genrule(
     name = "librobin-map-srcs",
@@ -15,7 +15,7 @@ genrule(
         'export TMP_DIR=$$(mktemp -d -t librobin-map.XXXXX)',
         'mkdir -p $$TMP_DIR',
         'cp -R $$(pwd)/external/robin-map/* $$TMP_DIR',
-        'cd $$TMP_DIR/robin-map',
+        'cd $$TMP_DIR',
         'mkdir build',
         'cd build',
         'cmake ../ -DCMAKE_INSTALL_PREFIX=$$INSTALL_DIR',
