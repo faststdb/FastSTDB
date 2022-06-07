@@ -330,7 +330,7 @@ std::tuple<common::Status, u32> MetaVolume::get_nblocks(u32 id) const {
     u32 nblocks = pvol->nblocks;
     return std::make_tuple(common::Status::Ok(), nblocks);
   }
-  return std::make_tuple(common::Status::Internal("Id out of range"), 0u);
+  return std::make_tuple(common::Status::OutOfRange("Id out of range"), 0u);
 }
 
 std::tuple<common::Status, u32> MetaVolume::get_capacity(u32 id) const {
@@ -339,7 +339,7 @@ std::tuple<common::Status, u32> MetaVolume::get_capacity(u32 id) const {
     u32 cap = pvol->capacity;
     return std::make_tuple(common::Status::Ok(), cap);
   }
-  return std::make_tuple(common::Status::Internal("Id out of range"), 0u);
+  return std::make_tuple(common::Status::OutOfRange("Id out of range"), 0u);
 }
 
 std::tuple<common::Status, u32> MetaVolume::get_generation(u32 id) const {
@@ -348,7 +348,7 @@ std::tuple<common::Status, u32> MetaVolume::get_generation(u32 id) const {
     u32 gen = pvol->generation;
     return std::make_tuple(common::Status::Ok(), gen);
   }
-  return std::make_tuple(common::Status::Internal("Id out of range"), 0u);
+  return std::make_tuple(common::Status::OutOfRange("Id out of range"), 0u);
 }
 
 common::Status MetaVolume::add_volume(u32 id, u32 capacity, const std::string& path) {
@@ -403,7 +403,7 @@ common::Status MetaVolume::update(u32 id, u32 nblocks, u32 capacity, u32 gen) {
 
     return common::Status::Ok();
   }
-  return common::Status::Internal("Id out of range");
+  return common::Status::OutOfRange("Id out of range");
 }
 
 common::Status MetaVolume::set_nblocks(u32 id, u32 nblocks) {
@@ -422,7 +422,7 @@ common::Status MetaVolume::set_nblocks(u32 id, u32 nblocks) {
 
     return common::Status::Ok();
   }
-  return common::Status::Internal("Id out of range");
+  return common::Status::OutOfRange("Id out of range");
 }
 
 common::Status MetaVolume::set_capacity(u32 id, u32 cap) {
@@ -441,7 +441,7 @@ common::Status MetaVolume::set_capacity(u32 id, u32 cap) {
 
     return common::Status::Ok();
   }
-  return common::Status::Internal("Id out of range");
+  return common::Status::OutOfRange("Id out of range");
 }
 
 common::Status MetaVolume::set_generation(u32 id, u32 gen) {
@@ -460,7 +460,7 @@ common::Status MetaVolume::set_generation(u32 id, u32 gen) {
 
     return common::Status::Ok();
   }
-  return common::Status::Internal("ID out of range");
+  return common::Status::OutOfRange("ID out of range");
 }
 
 void MetaVolume::flush() {

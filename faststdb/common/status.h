@@ -15,7 +15,7 @@ class Status {
  public:
   enum ErrorCode {
     kOk = 0,
-    kArgumentError,
+    kOutOfRange,
     kOverflow,
     kFileSeekError,
     kFileWriteError,
@@ -72,7 +72,7 @@ class Status {
   }
 
   static Status Ok() { return Status(); }
-  static Status ArgumentError(const std::string& msg) { return Status(kArgumentError, msg); }
+  static Status OutOfRange(const std::string& msg) { return Status(kOutOfRange, msg); }
   static Status Overflow(const std::string& msg) { return Status(kOverflow, msg); }
   static Status FileSeekError(const std::string& msg) { return Status(kFileSeekError, msg); }
   static Status FileWriteError(const std::string& msg) { return Status(kFileWriteError, msg); }
