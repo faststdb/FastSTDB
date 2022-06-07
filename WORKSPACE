@@ -50,3 +50,5 @@ http_archive(
    build_file = "@//thirdparty:CRoaring.BUILD",
 )
 
+load("//thirdparty:deps.bzl", "boost_deps")
+boost_deps()
