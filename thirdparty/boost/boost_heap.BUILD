@@ -25,5 +25,6 @@ cc_library(
       "@com_github_boost_intrusive//:intrusive",
       "@com_github_boost_move//:move",
       "@com_github_boost_iterator//:iterator",
+      "@com_github_boost_parameter//:parameter",
   ]
 )
