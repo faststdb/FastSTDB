@@ -6,6 +6,7 @@ cc_library(
   name = "common",
   srcs = [
     "crc32c.cc",
+    "hash.cc",
     "mmapfile.cc",
     "proto_configure.cc",
     "rwlock.cc",
