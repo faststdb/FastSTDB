@@ -24,8 +24,13 @@ MMapFile::MMapFile() : mmap_size_(0) { }
  
 MMapFile::~MMapFile() {
   if (fd_ >= 0 && base_) {
-    ftruncate(fd_, mmap_size_);
-    int32_t ret = munmap(base_, mmap_size_);
+    auto ret = ftruncate(fd_, mmap_size_);
+    if (ret != 0) {
+      LOG(ERROR) << "failed ftruncate to mmap file["
+          << file_name_ << "], emsg: "
+          << strerror(errno);
+    }
+    ret = munmap(base_, mmap_size_);
     if (ret != 0) {
       LOG(ERROR) << "failed to munmap file["
           << file_name_ << "], emsg: "

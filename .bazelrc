@@ -12,4 +12,4 @@ build --genrule_strategy=standalone
 build -c opt
 build --copt -O2
 build --copt -g
-build --copt -std=c++17
+#build --copt -std=c++17
