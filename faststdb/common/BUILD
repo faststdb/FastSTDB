@@ -15,6 +15,7 @@ cc_library(
     "blocking_queue.h",
     "crc32c.h",
     "file_utils.h",
+    "hash.h",
     "logging.h",
     "mmapfile.h",
     "proto_configure.h",
@@ -44,6 +45,16 @@ cc_test(
 cc_test(
   name = "rwlock_test",
   srcs = ["rwlock_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":common",
+  ],
+)
+
+cc_test(
+  name = "hash_test",
+  srcs = ["hash_test.cc"],
   deps = [
     "@gtest//:gtest",
     "@gtest//:gtest_main",
