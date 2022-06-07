@@ -21,5 +21,6 @@ cc_library(
       "@com_github_boost_throw_exception//:throw_exception",
       "@com_github_boost_concept_check//:concept_check",
       "@com_github_boost_preprocessor//:preprocessor",
+      "@com_github_boost_type_traits//:type_traits",
   ]
 )
