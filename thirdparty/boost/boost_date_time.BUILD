@@ -28,5 +28,6 @@ cc_library(
     "@com_github_boost_io//:io",
     "@com_github_boost_algorithm//:algorithm",
     "@com_github_boost_lexical_cast//:lexical_cast",
+    "@com_github_boost_tokenizer//:tokenizer",
   ]
 )
