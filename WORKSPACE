@@ -41,10 +41,12 @@ load("@rules_proto//proto:repositories.bzl", "rules_proto_dependencies", "rules_
 rules_proto_dependencies()
 rules_proto_toolchains()
 
-new_git_repository(
+http_archive(
    name = "CRoaring",
-   remote = "git@github.com:faststdb/CRoaring.git",
-   tag = "v0.5.0",
-   build_file = "thirdparty/CRoaring.BUILD",
+   sha256 = "edab1b1a464e5a361ff622dc833170b2f33729c161aee4c2e53a324ac62ef78f",
+   urls = [
+     "https://github.com/RoaringBitmap/CRoaring/archive/refs/tags/v0.5.0.tar.gz",
+   ],
+   build_file = "@//thirdparty:CRoaring.BUILD",
 )
 
