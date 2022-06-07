@@ -19,5 +19,6 @@ cc_library(
       "@com_github_boost_detail//:detail",
       "@com_github_boost_static_assert//:static_assert",
       "@com_github_boost_throw_exception//:throw_exception",
+      "@com_github_boost_concept_check//:concept_check",
   ]
 )
