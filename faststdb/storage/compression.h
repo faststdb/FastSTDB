@@ -22,6 +22,8 @@
 #include "faststdb/common/logging.h"
 #include "faststdb/common/status.h"
 
+#include "faststdb/storage/volume.h"
+
 namespace faststdb {
 namespace storage {
 
@@ -1533,7 +1535,7 @@ struct IOVecBlockReader {
         return std::make_tuple(common::Status::Ok(), ts, value);
       }
     }
-    return std::make_tuple(common::Status::Internal("No data"), 0ull, 0.0);
+    return std::make_tuple(common::Status::NoData(""), 0ull, 0.0);
   }
 
   size_t nelements() const {

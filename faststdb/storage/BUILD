@@ -74,6 +74,16 @@ cc_test(
 )
 
 cc_test(
+  name = "compression_test",
+  srcs = ["compression_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":storage",
+  ],
+)
+
+cc_test(
   name = "block_store_test",
   srcs = ["block_store_test.cc"],
   deps = [

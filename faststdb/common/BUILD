@@ -6,6 +6,7 @@ cc_library(
   name = "common",
   srcs = [
     "crc32c.cc",
+    "datetime.cc",
     "hash.cc",
     "mmapfile.cc",
     "proto_configure.cc",
@@ -15,6 +16,7 @@ cc_library(
     "basic.h",
     "blocking_queue.h",
     "crc32c.h",
+    "datetime.h",
     "file_utils.h",
     "hash.h",
     "logging.h",
@@ -27,10 +29,14 @@ cc_library(
     "timer.h",
   ],
   alwayslink = 1,
+  copts = [
+    "-DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG",
+  ],
   deps = [
     "@glog",
     "@com_google_protobuf//:protobuf",
     "@robin-map//:librobin-map",
+    "@com_github_boost_date_time//:date_time",
   ],
 )
 
@@ -57,6 +63,16 @@ cc_test(
 cc_test(
   name = "hash_test",
   srcs = ["hash_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":common",
+  ],
+)
+
+cc_test(
+  name = "datetime_test",
+  srcs = ["datetime_test.cc"],
   deps = [
     "@gtest//:gtest",
     "@gtest//:gtest_main",
