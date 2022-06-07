@@ -20,5 +20,6 @@ cc_library(
     "@com_github_boost_mpl//:mpl",
     "@com_github_boost_smart_ptr//:smart_ptr",
     "@com_github_boost_utility//:utility",
+    "@com_github_boost_config//:config",
   ]
 )
