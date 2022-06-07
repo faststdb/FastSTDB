@@ -3,12 +3,13 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 cc_library(
-  name = "heap",
+  name = "mp11",
   includes = [
       "include/",
   ],
   hdrs = glob([
       "include/boost/**/*.hpp",
+      "include/boost/*.hpp",
   ]),
   srcs = [
   ],
@@ -26,6 +27,5 @@ cc_library(
       "@com_github_boost_move//:move",
       "@com_github_boost_iterator//:iterator",
       "@com_github_boost_parameter//:parameter",
-      "@com_github_boost_mp11//:mp11",
   ]
 )

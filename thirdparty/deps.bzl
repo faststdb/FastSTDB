@@ -3,6 +3,13 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 def boost_deps():
   new_git_repository(
+    name = "com_github_boost_mp11",
+    build_file = "@//thirdparty/boost:boost_mp11.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/mp11.git",
+  )
+
+  new_git_repository(
     name = "com_github_boost_array",
     build_file = "@//thirdparty/boost:boost_array.BUILD",
     tag = "boost-1.79.0",
