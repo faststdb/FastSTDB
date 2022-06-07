@@ -8,11 +8,16 @@
 #include <string>
 #include <algorithm>
 
+#include "faststdb/common/thread_local.h"
+
 namespace faststdb {
 namespace common {
 
 class Status {
  public:
+  // In FastSTDB, status can not cross threads.
+  typedef ThreadLocalStore<std::string> ErrorDetailString;
+
   enum ErrorCode {
     kOk = 0,
     kOutOfRange,
@@ -30,69 +35,119 @@ class Status {
     kUnknown
   };
 
-  Status() : state_(nullptr) {}
-  ~Status() { delete state_; }
+  Status() : code_(kOk) { }
+  ~Status() { }
 
-  Status(ErrorCode code, const std::string& msg)
-    : state_(new State{code, msg}) {}
+  Status(ErrorCode code) : code_(code) { }
+  Status(ErrorCode code, const std::string& msg) : Status(code) { }
 
-  Status(const Status& s) : state_(s.state_ == nullptr ? nullptr : new State(*s.state_)) {}
+  Status(const Status& s) : code_(s.code_) { }
   void operator=(const Status& s) {
-    if (!state_) delete state_;
-    state_ = s.state_ == nullptr ? nullptr : new State(*s.state_);
+    this->code_ = s.code_;
   }
 
-  Status(Status&& s) : state_(s.state_) { s.state_ = nullptr; }
-  void operator=(Status&& s) { std::swap(state_, s.state_); }
+  Status(Status&& s) : code_(s.code_) { }
+  void operator=(Status&& s) { this->code_ = s.code_; }
 
-  bool IsOk() const { return state_ == nullptr; }
+  bool IsOk() const { return code_ == kOk; }
 
   ErrorCode Code() const {
-    return state_ == nullptr ? kOk : state_->code;
+    return code_;
   }
 
   std::string Msg() const {
-    return state_ == nullptr ? "" : state_->msg;
+    return ToString();
   }
 
   bool operator==(const Status& x) const {
-    return (state_ == nullptr && x.state_ == nullptr) ||
-      (state_ != nullptr && x.state_ != nullptr && state_->code == x.state_->code && state_->msg == x.state_->msg);
+    return x.code_ == this->code_;
   }
   bool operator!=(const Status& x) const {
     return !(*this == x);
   }
 
   std::string ToString() const {
-    if (state_ == nullptr) {
-      return "OK";
-    } else {
-      return "ErrorCode [" + std::to_string(Code()) + "]: " + Msg();
+    std::string error_msg;
+    switch (code_) {
+      case kOk:
+        return "OK";
+
+      case kOutOfRange:
+        error_msg = "Out of range";
+        break;
+      case kOverflow:
+        error_msg = "Array Overflow";
+        break;
+      case kFileSeekError:
+        error_msg = "Seek file error";
+        break;
+      case kFileWriteError:
+        error_msg = "Write file error";
+        break;
+      case kBadArg:
+        error_msg = "Bad argument";
+        break;
+      case kBadData:
+        error_msg = "Bad data";
+        break;
+      case kNoData:
+        error_msg = "No data available";
+        break;
+      case kUnavailable:
+        error_msg = "Unavailable";
+        break;
+      case kNotFound:
+        error_msg = "Not found";
+        break;
+      case kNoMemory:
+        error_msg = "No more memory";
+        break;
+      case kEAccess:
+        error_msg = "Access error";
+        break;
+      case kInternal:
+        error_msg = "Internal error";
+        break;
+
+      case kUnknown:
+      default:
+        error_msg = "Unkown error";
+        break;
     }
+    return error_msg + " " + *ErrorDetailString::Get();  
   }
 
   static Status Ok() { return Status(); }
-  static Status OutOfRange(const std::string& msg) { return Status(kOutOfRange, msg); }
-  static Status Overflow(const std::string& msg) { return Status(kOverflow, msg); }
-  static Status FileSeekError(const std::string& msg) { return Status(kFileSeekError, msg); }
-  static Status FileWriteError(const std::string& msg) { return Status(kFileWriteError, msg); }
-  static Status BadArg(const std::string& msg) { return Status(kBadArg, msg); }
-  static Status BadData(const std::string& msg) { return Status(kBadData, msg); }
-  static Status NoData(const std::string& msg) { return Status(kNoData, msg); }
-  static Status Unavailable(const std::string& msg) { return Status(kUnavailable, msg); }
-  static Status NotFound(const std::string& msg) { return Status(kNotFound, msg); }
-  static Status NoMemory(const std::string& msg) { return Status(kNoMemory, msg); }
-  static Status EAccess(const std::string& msg) { return Status(kEAccess, msg); }
-  static Status Internal(const std::string& msg) { return Status(kInternal, msg); }
-  static Status Unknown(const std::string& msg) { return Status(kUnknown, msg); }
+
+#define ADD_UTILITY(name, code)                   \
+  static Status name(const std::string& msg) {    \
+    ErrorDetailString::Get()->assign(msg);        \
+    return Status(code, msg);                     \
+  }                                               \
+  static Status name() {                          \
+    ErrorDetailString::Get()->clear();            \
+    return Status(code);                          \
+  }
+
+  ADD_UTILITY(OutOfRange,      kOutOfRange       )
+  ADD_UTILITY(Overflow,        kOverflow         )
+  ADD_UTILITY(FileSeekError,   kFileSeekError    )
+  ADD_UTILITY(FileWriteError,  kFileWriteError   )
+  ADD_UTILITY(BadArg,          kBadArg           )
+  ADD_UTILITY(BadData,         kBadData          )
+  ADD_UTILITY(NoData,          kNoData           )
+  ADD_UTILITY(Unavailable,     kUnavailable      )
+  ADD_UTILITY(NotFound,        kNotFound         )
+  ADD_UTILITY(NoMemory,        kNoMemory         )
+  ADD_UTILITY(EAccess,         kEAccess          )
+  ADD_UTILITY(Internal,        kInternal         )
+
+  ADD_UTILITY(Unknown,         kUnknown          )
+
+#undef ADD_UTILITY
 
  private:
-  struct State {
-    ErrorCode code;
-    std::string msg;
-  };
-
-  State* state_;
+  ErrorCode code_;
 };
 
 }  // namespace common
@@ -105,6 +160,5 @@ class Status {
       return __st__;				                       \
     }						                                   \
   } while (0)
-
 
 #endif  // FASTSTDB_COMMON_STATUS_H_
