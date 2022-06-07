@@ -44,6 +44,7 @@ cc_library(
   ],
   alwayslink = 1,
   deps = [
+    "@com_github_boost_range//:range",
     "@com_github_boost_array//:array",
     "@com_github_boost_heap//:heap",
     "@CRoaring//:libcroaring",
