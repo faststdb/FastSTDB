@@ -2,29 +2,32 @@ load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository", "new_git_r
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 def boost_deps():
-  http_archive(
+  new_git_repository(
     name = "com_github_boost_array",
-    sha256 = "a3abe63ca22a3c2de09cd2bf4dbef9c3c87897c11bef8f26cb35ad39f164d7ce",
     build_file = "@//thirdparty/boost:boost_array.BUILD",
-    urls = ["https://github.com/boostorg/array/archive/refs/tags/boost-1.79.0.tar.gz"],
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/array.git",
   )
 
-  http_archive(
+  new_git_repository(
     name = "com_github_boost_config",
     build_file = "@//thirdparty/boost:boost_config.BUILD",
-    urls = ["https://github.com/boostorg/config/archive/refs/tags/boost-1.79.0.tar.gz"],
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/config.git",
   )
 
-  http_archive(
+  new_git_repository(
     name = "com_github_boost_detail",
     build_file = "@//thirdparty/boost:boost_detail.BUILD",
-    urls = ["https://github.com/boostorg/detail/archive/refs/tags/boost-1.79.0.tar.gz"],
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/detail.git",
   )
 
-  http_archive(
+  new_git_repository(
     name = "com_github_boost_core",
     build_file = "@//thirdparty/boost:boost_core.BUILD",
-    urls = ["https://github.com/boostorg/core/archive/refs/tags/boost-1.79.0.tar.gz"],
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/core.git",
   )
 
   new_git_repository(

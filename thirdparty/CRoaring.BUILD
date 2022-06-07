@@ -22,7 +22,7 @@ genrule(
         'cd $$TMP_DIR/CRoaring-0.5.0',
         'mkdir build',
         'cd build',
-        'cmake ../ -DCMAKE_INSTALL_PREFIX=$$INSTALL_DIR',
+        'cmake ../ -DCMAKE_INSTALL_PREFIX=$$INSTALL_DIR -DCMAKE_INSTALL_LIBDIR=$$INSTALL_DIR/lib64',
         'make install',
         'rm -rf $$TMP_DIR',
     ]),
