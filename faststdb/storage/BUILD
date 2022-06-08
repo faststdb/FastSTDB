@@ -19,6 +19,7 @@ cc_library(
   srcs = [
     "block_store.cc",
     "compression.cc",
+    "column_store.cc",
     "input_log.cc",
     "meta_storage.cc",
     "nbtree.cc",
@@ -32,6 +33,7 @@ cc_library(
   hdrs = [
     "block_store.h",
     "compression.h",
+    "column_store.h",
     "input_log.h",
     "meta_storage.h",
     "nbtree.h",
@@ -109,6 +111,26 @@ cc_test(
 cc_test(
   name = "nbtree_test",
   srcs = ["nbtree_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":storage",
+  ],
+)
+
+cc_test(
+  name = "column_store_test",
+  srcs = ["column_store_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":storage",
+  ],
+)
+
+cc_test(
+  name = "input_log_test",
+  srcs = ["input_log_test.cc"],
   deps = [
     "@gtest//:gtest",
     "@gtest//:gtest_main",

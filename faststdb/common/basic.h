@@ -20,6 +20,15 @@ typedef int16_t  i16;
 typedef uint8_t  u8;
 typedef int8_t   i8;
 
+
+#ifdef __GNUC__
+#define LIKELY(x)   __builtin_expect((x), 1)
+#define UNLIKELY(x) __builtin_expect((x), 0)
+#else
+#define LIKELY(x)   (x)
+#define UNLIKELY(x) (x)
+#endif
+
 #define PACKED __attribute__((__packed__))
 #define UNUSED(x) (void)(x)
 #define FASTSTDB_VERSION 101
