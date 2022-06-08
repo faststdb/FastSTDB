@@ -25,7 +25,7 @@ genrule(
         'cd expat',
         'mkdir build',
         'cd build',
-        'cmake ../ -DCMAKE_INSTALL_PREFIX=$$INSTALL_DIR',
+        'cmake ../ -DCMAKE_INSTALL_PREFIX=$$INSTALL_DIR -DCMAKE_INSTALL_LIBDIR=$$INSTALL_DIR/lib -DEXPAT_SHARED_LIBS=false',
         'make',
         'make install',
         'rm -rf $$TMP_DIR',
