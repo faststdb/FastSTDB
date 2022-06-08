@@ -60,3 +60,10 @@ new_git_repository(
 	remote = "https://github.com/Tessil/robin-map.git",
 )
 
+new_git_repository(
+	name = "lz4",
+	build_file = "@//thirdparty:lz4.BUILD",
+	tag = "v1.9.3",
+	remote = "https://github.com/lz4/lz4.git",
+)
+
