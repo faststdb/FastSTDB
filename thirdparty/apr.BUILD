@@ -25,7 +25,7 @@ genrule(
         'cp -R $$(pwd)/external/apr/* $$TMP_DIR',
         'cd $$TMP_DIR',
         './buildconf',
-        './configure --prefix=$$INSTALL_DIR --with-expat=$$INSTALL_DIR/../expat/ --with-sqlite3=$$INSTALL_DIR/../sqlite --enable-shared=false'
+        './configure --prefix=$$INSTALL_DIR --with-expat=$$INSTALL_DIR/../expat/ --with-sqlite3=$$INSTALL_DIR/../sqlite --enable-shared=false',
         'make',
         'make install',
         'rm -rf $$TMP_DIR',
