@@ -2,9 +2,9 @@ licenses(["notice"])
 
 package(default_visibility = ["//visibility:public"])
 
-include_files = glob([
-   "include/libapr-1/*.h",
-])
+include_files = [
+   "include/apr-1/apr.h",
+]
 
 lib_files = [
    "lib/libapr-1.a",
@@ -35,7 +35,7 @@ genrule(
 cc_library(
     name = "libapr",
     srcs = lib_files,
-    hdrs = include_files,
+    hdrs = glob(["include/libapr-1/*.h"]),
     includes=["include/libapr-1"],
     linkstatic = 1,
 )
