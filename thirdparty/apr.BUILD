@@ -19,6 +19,7 @@ genrule(
     ],
     cmd = "\n".join([
         'set -x',
+        'which libtool',
         'export INSTALL_DIR=$$(pwd)/$(@D)',
         'export TMP_DIR=$$(mktemp -d -t libapr.XXXXX)',
         'mkdir -p $$TMP_DIR',
