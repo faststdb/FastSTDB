@@ -67,3 +67,23 @@ new_git_repository(
 	remote = "https://github.com/lz4/lz4.git",
 )
 
+new_git_repository(
+	name = "apr",
+	build_file = "@//thirdparty:apr.BUILD",
+	tag = "1.7.0",
+  remote = "https://github.com/apache/apr.git",
+)
+
+new_git_repository(
+	name = "sqlite",
+	build_file = "@//thirdparty:sqlite.BUILD",
+	tag = "version-3.38.5",
+  remote = "https://github.com/sqlite/sqlite.git",
+)
+
+new_git_repository(
+	name = "expat",
+	build_file = "@//thirdparty:expat.BUILD",
+	tag = "R_2_4_8",
+  remote = "https://github.com/libexpat/libexpat.git",
+)

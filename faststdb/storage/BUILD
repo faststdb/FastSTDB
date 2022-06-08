@@ -45,6 +45,9 @@ cc_library(
   ],
   alwayslink = 1,
   deps = [
+    "@sqlite//:libsqlite",
+    "@expat//:libexpat",
+    "@apr//:libapr",
     "@lz4//:liblz4",
     "@com_github_boost_range//:range",
     "@com_github_boost_array//:array",

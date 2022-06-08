@@ -20,6 +20,7 @@ typedef int16_t  i16;
 typedef uint8_t  u8;
 typedef int8_t   i8;
 
+#define PACKED __attribute__((__packed__))
 #define UNUSED(x) (void)(x)
 #define FASTSTDB_VERSION 101
 
