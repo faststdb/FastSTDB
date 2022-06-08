@@ -70,8 +70,8 @@ new_git_repository(
 new_git_repository(
 	name = "apr",
 	build_file = "@//thirdparty:apr.BUILD",
-	tag = "1.7.0",
-  remote = "https://github.com/apache/apr.git",
+	branch = "trunk",
+  remote = "https://github.com/faststdb/apr.git",
 )
 
 new_git_repository(
