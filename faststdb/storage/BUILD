@@ -19,6 +19,7 @@ cc_library(
   srcs = [
     "block_store.cc",
     "compression.cc",
+    "input_log.cc",
     "meta_storage.cc",
     "nbtree.cc",
     "volume.cc",
@@ -31,6 +32,7 @@ cc_library(
   hdrs = [
     "block_store.h",
     "compression.h",
+    "input_log.h",
     "meta_storage.h",
     "nbtree.h",
     "nbtree_def.h",
@@ -44,15 +46,21 @@ cc_library(
     "operators/aggregate.h",
   ],
   alwayslink = 1,
+  copts = [
+    "-std=c++14",
+  ],
   deps = [
     "@sqlite//:libsqlite",
     "@expat//:libexpat",
     "@apr//:libapr",
     "@lz4//:liblz4",
+    "@CRoaring//:libcroaring",
     "@com_github_boost_range//:range",
     "@com_github_boost_array//:array",
     "@com_github_boost_heap//:heap",
-    "@CRoaring//:libcroaring",
+    "@com_github_boost_filesystem//:filesystem",
+    "@com_github_boost_container_hash//:container_hash",
+    "@com_github_boost_variant//:variant",
     "//faststdb/common:common",
     ":meta_volume_cc_proto",
   ],

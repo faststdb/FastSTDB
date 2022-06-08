@@ -6,13 +6,18 @@ cc_library(
   name = "filesystem",
   includes = [
       "include/",
+      "src",
   ],
   hdrs = glob([
       "include/boost/**/*.hpp",
+      "src/*.hpp",
   ]),
   srcs = glob([
         "src/*.cpp"
   ]),
+  copts = [
+    "-DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF",
+  ],
   deps = [
       "@com_github_boost_config//:config",
       "@com_github_boost_detail//:detail",
@@ -23,5 +28,7 @@ cc_library(
       "@com_github_boost_range//:range",
       "@com_github_boost_system//:system",
       "@com_github_boost_type_traits//:type_traits",
+      "@com_github_boost_container_hash//:container_hash",
+      "@com_github_boost_atomic//:atomic",
   ]
 )

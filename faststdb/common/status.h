@@ -31,6 +31,7 @@ class Status {
     kNotFound,
     kNoMemory,
     kEAccess,
+    kErrIO,
     kInternal,
     kUnknown
   };
@@ -105,6 +106,9 @@ class Status {
       case kEAccess:
         error_msg = "Access error";
         break;
+      case kErrIO:
+        error_msg = "IO error";
+        break;
       case kInternal:
         error_msg = "Internal error";
         break;
@@ -141,6 +145,7 @@ class Status {
   ADD_UTILITY(NoMemory,        kNoMemory         )
   ADD_UTILITY(EAccess,         kEAccess          )
   ADD_UTILITY(Internal,        kInternal         )
+  ADD_UTILITY(ErrIO,           kErrIO            )
 
   ADD_UTILITY(Unknown,         kUnknown          )
 

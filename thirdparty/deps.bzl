@@ -101,6 +101,13 @@ def boost_deps():
   )
 
   new_git_repository(
+    name = "com_github_boost_container_hash",
+    build_file = "@//thirdparty/boost:boost_container_hash.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/container_hash.git",
+  )
+
+  new_git_repository(
     name = "com_github_boost_crc",
     build_file = "@//thirdparty/boost:boost_crc.BUILD",
     tag = "boost-1.79.0",
@@ -119,6 +126,13 @@ def boost_deps():
     build_file = "@//thirdparty/boost:boost_filesystem.BUILD",
     tag = "boost-1.79.0",
     remote = "https://github.com/boostorg/filesystem.git",
+  )
+
+  new_git_repository(
+    name = "com_github_boost_atomic",
+    build_file = "@//thirdparty/boost:boost_atomic.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/atomic.git",
   )
 
   new_git_repository(
