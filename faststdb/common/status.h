@@ -36,6 +36,11 @@ class Status {
     kHighCardinality,
     kMissingDataNotSupported,
     kQueryParsingError,
+    kTimeout,
+    kRetry,
+    kGeneral,
+    kLateWrite,
+    kNotPermitted,
     kInternal,
     kUnknown
   };
@@ -128,6 +133,21 @@ class Status {
       case kQueryParsingError:
         error_msg = "Query Parsing Error";
         break;
+      case kTimeout:
+        error_msg = "Timeout";
+        break;
+      case kRetry:
+        error_msg = "Retry";
+        break;
+      case kGeneral:
+        error_msg = "General error";
+        break;
+      case kLateWrite:
+        error_msg = "Late write";
+        break;
+      case kNotPermitted:
+        error_msg = "Not permitted";
+        break;
 
       case kUnknown:
       default:
@@ -166,6 +186,11 @@ class Status {
   ADD_UTILITY(HighCardinality, kHighCardinality  )
   ADD_UTILITY(MissingDataNotSupported, kMissingDataNotSupported)
   ADD_UTILITY(QueryParsingError, kQueryParsingError)
+  ADD_UTILITY(Timeout, kTimeout)
+  ADD_UTILITY(Retry,   kRetry)
+  ADD_UTILITY(General, kGeneral)
+  ADD_UTILITY(LateWrite, kLateWrite)
+  ADD_UTILITY(NotPermitted, kNotPermitted)
 
   ADD_UTILITY(Unknown,         kUnknown          )
 

@@ -24,6 +24,13 @@ def boost_deps():
   )
 
   new_git_repository(
+    name = "com_github_boost_thread",
+    build_file = "@//thirdparty/boost:boost_thread.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/thread.git",
+  )
+
+  new_git_repository(
     name = "com_github_boost_detail",
     build_file = "@//thirdparty/boost:boost_detail.BUILD",
     tag = "boost-1.79.0",

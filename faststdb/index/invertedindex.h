@@ -359,7 +359,7 @@ namespace std {
 
 template<>
 struct iterator_traits<faststdb::CompressedPListConstIterator> {
-  typedef faststdb::u64 value_type;
+  typedef u64 value_type;
   typedef forward_iterator_tag iterator_category;
 };
 

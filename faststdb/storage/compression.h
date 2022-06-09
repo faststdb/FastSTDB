@@ -3,8 +3,6 @@
  *
  * Compression algorithms
  *
- * Copyright (c) 2013 Eugene Lazin <4lazin@gmail.com>
- *
  */
 #ifndef FASTSTDB_STORAGE_COMPRESSION_H_
 #define FASTSTDB_STORAGE_COMPRESSION_H_

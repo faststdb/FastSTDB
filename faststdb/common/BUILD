@@ -15,6 +15,7 @@ cc_library(
   hdrs = [
     "basic.h",
     "blocking_queue.h",
+    "config.h",
     "crc32c.h",
     "datetime.h",
     "file_utils.h",
@@ -27,6 +28,7 @@ cc_library(
     "singleton.h",
     "thread_local.h",
     "timer.h",
+    "types.h",
   ],
   alwayslink = 1,
   copts = [
