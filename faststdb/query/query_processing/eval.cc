@@ -10,10 +10,12 @@
 
 #include <boost/algorithm/string.hpp>
 
+#include "muParser.h"
+
 namespace faststdb {
 namespace qp {
 
-static std::unordered_map<std::string, int> buildNameToIndexMapping(const QP::ReshapeRequest& req)
+static std::unordered_map<std::string, int> buildNameToIndexMapping(const qp::ReshapeRequest& req)
 {
   std::unordered_map<std::string, int> result;
   const int ncol = static_cast<int>(req.select.columns.size());
@@ -163,7 +165,7 @@ struct MuparserEvalImpl : Node {
     return true;
   }
 
-  virtual void set_error(aku_Status status) {
+  virtual void set_error(common::Status status) {
     next_->set_error(status);
   }
 

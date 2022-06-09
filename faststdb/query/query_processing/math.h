@@ -8,8 +8,8 @@
 
 #include "../queryprocessor_framework.h"
 
-namespace Akumuli {
-namespace QP {
+namespace faststdb {
+namespace qp {
 
 template <class Op>
 struct MathOperation : Node {
@@ -25,7 +25,7 @@ struct MathOperation : Node {
 
   virtual bool put(MutableSample& sample);
 
-  virtual void set_error(aku_Status status);
+  virtual void set_error(common::Status status);
 
   virtual int get_requirements() const;
 };
@@ -72,7 +72,7 @@ bool MathOperation<Op>::put(MutableSample &mut) {
 }
 
 template<class Op>
-void MathOperation<Op>::set_error(aku_Status status) {
+void MathOperation<Op>::set_error(common::Status status) {
   next_->set_error(status);
 }
 

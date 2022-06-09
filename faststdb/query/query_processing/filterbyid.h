@@ -12,7 +12,7 @@ namespace faststdb {
 namespace qp {
 
 /** Filter ids using predicate.
- * Predicate is an unary functor that accepts parameter of type aku_ParamId - fun(aku_ParamId) -> bool.
+ * Predicate is an unary functor that accepts parameter of type ParamId - fun(ParamId) -> bool.
  */
 template <class Predicate>
 struct FilterByIdNode : std::enable_shared_from_this<FilterByIdNode<Predicate>>, Node {

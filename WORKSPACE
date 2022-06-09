@@ -87,3 +87,10 @@ new_git_repository(
 	tag = "R_2_4_8",
   remote = "https://github.com/libexpat/libexpat.git",
 )
+
+new_git_repository(
+	name = "muparser",
+	build_file = "@//thirdparty:muparser.BUILD",
+	tag = "v2.3.2",
+  remote = "https://github.com/beltoforion/muparser.git",
+)
