@@ -21,6 +21,15 @@
 namespace faststdb {
 
 TEST(TestStringPool, Test) {
+  StringPool pool;
+  const char* foo = "foo";
+  auto id_foo = pool.add(foo, foo + 3);
+  auto result_foo = pool.str(id_foo);
+  const char* bar = "123456";
+  auto id_bar = pool.add(bar, bar + 6);
+  auto result_bar = pool.str(id_bar);
+  EXPECT_STREQ(std::string(result_foo.first, result_foo.first + result_foo.second).c_str(), foo);
+  EXPECT_STREQ(std::string(result_bar.first, result_bar.first + result_bar.second).c_str(), bar);
 }
 
 }  // namespace faststdb
