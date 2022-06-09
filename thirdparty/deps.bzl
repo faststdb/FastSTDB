@@ -324,6 +324,13 @@ def boost_deps():
     remote = "https://github.com/boostorg/regex.git",
   )
 
+  new_git_repository(
+    name = "com_github_boost_property_tree",
+    build_file = "@//thirdparty/boost:boost_property_tree.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/property_tree.git",
+  )
+
 
   new_git_repository(
     name = "com_github_boost_type_index",

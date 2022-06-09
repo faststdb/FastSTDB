@@ -28,6 +28,7 @@
 
 #include "faststdb/common/basic.h"
 #include "faststdb/common/logging.h"
+#include "faststdb/common/status.h"
 #include "faststdb/index/stringpool.h"
 
 namespace faststdb {

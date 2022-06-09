@@ -31,6 +31,9 @@ typedef int8_t   i8;
 
 #define PACKED __attribute__((__packed__))
 #define UNUSED(x) (void)(x)
+#define LIMITS_MAX_SNAME 0x1000
+#define LIMITS_MAX_TAGS 32
+
 #define FASTSTDB_VERSION 101
 
 typedef u64 Timestamp;  //< Timestamp

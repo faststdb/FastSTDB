@@ -6,7 +6,7 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 cc_library(
   name = "index",
   srcs = [
-    "invertedindex.h",
+    "invertedindex.cc",
     "seriesparser.cc",
     "stringpool.cc",
   ],
@@ -22,6 +22,16 @@ cc_library(
   deps = [
     "//faststdb/storage:storage",
     "@com_github_boost_regex//:regex",
+  ],
+)
+
+cc_test(
+  name = "invertedindex_test",
+  srcs = ["invertedindex_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":index",
   ],
 )
 
