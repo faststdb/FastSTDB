@@ -46,7 +46,7 @@ struct CumulativeSum : Node {
 
   virtual bool put(MutableSample& sample);
 
-  virtual void set_error(Status status);
+  virtual void set_error(common::Status status);
 
   virtual int get_requirements() const;
 };

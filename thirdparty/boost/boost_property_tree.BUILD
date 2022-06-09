@@ -13,5 +13,8 @@ cc_library(
   srcs = [
   ],
   deps = [
+    "@com_github_boost_optional//:optional",
+    "@com_github_boost_any//:any",
+    "@com_github_boost_multi_index//:multi_index",
   ]
 )

@@ -71,7 +71,7 @@ struct SpaceSaver : Node {
       if (support < estimate) {
         Sample s;
         s.paramid         = it.first;
-        s.payload.type    = AKU_PAYLOAD_FLOAT;
+        s.payload.type    = PAYLOAD_FLOAT;
         s.payload.float64 = it.second.count;
         s.payload.size    = sizeof(Sample);
         s.timestamp       = it.second.time;
@@ -100,9 +100,9 @@ struct SpaceSaver : Node {
 
   virtual bool put(MutableSample& sample) {
     // Require scalar
-    if ((sample.payload_.sample.payload.type & AKU_PAYLOAD_FLOAT) != AKU_PAYLOAD_FLOAT) {
+    if ((sample.payload_.sample.payload.type & PAYLOAD_FLOAT) != PAYLOAD_FLOAT) {
       // Query doesn't work with tuples
-      set_error(AKU_EHIGH_CARDINALITY);
+      set_error(common::Status::HighCardinality());
       return false;
     }
     double* val = sample[0];
@@ -113,7 +113,7 @@ struct SpaceSaver : Node {
       if (val) {
         weight = *val;
       } else {
-        set_error(AKU_EMISSING_DATA_NOT_SUPPORTED);
+        set_error(common::Status::MissingDataNotSupported());
         return false;
       }
     }

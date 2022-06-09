@@ -1,7 +1,7 @@
 #include "top.h"
 
-namespace Akumuli {
-namespace QP {
+namespace faststdb {
+namespace qp {
 
 TopN::TopN(size_t N, std::shared_ptr<Node> next)
     : next_(next)
@@ -32,7 +32,7 @@ void TopN::complete() {
     sample.timestamp = ctx[i]->last_ts;
     sample.payload.size    = sizeof(Sample);
     sample.payload.float64 = ctx[i]->sum;
-    sample.payload.type = AKU_PAYLOAD_FLOAT;
+    sample.payload.type = PAYLOAD_FLOAT;
     MutableSample mut(&sample);
     if (!next_->put(mut)) {
       break;
@@ -44,9 +44,9 @@ void TopN::complete() {
 bool TopN::put(MutableSample& sample) {
   static const double nanosinsec = 1000000000.0;
   // Require scalar
-  if ((sample.payload_.sample.payload.type & AKU_PAYLOAD_FLOAT) != AKU_PAYLOAD_FLOAT) {
+  if ((sample.payload_.sample.payload.type & PAYLOAD_FLOAT) != PAYLOAD_FLOAT) {
     // Query doesn't work with tuples
-    set_error(AKU_EHIGH_CARDINALITY);
+    set_error(common::Status::HighCardinality());
     return false;
   }
   Timestamp ts = sample.get_timestamp();
@@ -78,7 +78,6 @@ void TopN::set_error(common::Status status) {
 int TopN::get_requirements() const {
   return TERMINAL;
 }
-
 
 static QueryParserToken<TopN>  cusum_token("top");
 

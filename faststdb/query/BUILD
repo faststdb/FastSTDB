@@ -9,7 +9,6 @@ cc_library(
     "queryprocessor.cc",
     "queryprocessor_framework.cc",
     "query_processing/absolute.cc", 
-    #"query_processing/anomaly.cc",
     "query_processing/filterbyid.cc",
     "query_processing/limiter.cc",
     "query_processing/rate.cc",
@@ -19,10 +18,11 @@ cc_library(
     "query_processing/top.cc",
   ],
   hdrs = [
+    "external_cursor.h",
+    "internal_cursor.h",
     "queryprocessor.h",
     "queryprocessor_framework.h",
     "query_processing/absolute.h", 
-    #"query_processing/anomaly.h",
     "query_processing/filterbyid.h",
     "query_processing/limiter.h",
     "query_processing/rate.h",
@@ -37,6 +37,9 @@ cc_library(
   ],
   deps = [
     "//faststdb/storage:storage",
+    "//faststdb/index:index",
+    "@com_github_boost_property_tree//:property_tree",
+    "@com_github_boost_circular_buffer//:circular_buffer",
   ],
 )
 

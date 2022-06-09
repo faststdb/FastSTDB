@@ -178,6 +178,14 @@ def boost_deps():
   )
 
   new_git_repository(
+    name = "com_github_boost_tuple",
+    build_file = "@//thirdparty/boost:boost_tuple.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/tuple.git",
+  )
+
+
+  new_git_repository(
     name = "com_github_boost_io",
     build_file = "@//thirdparty/boost:boost_io.BUILD",
     tag = "boost-1.79.0",
@@ -199,10 +207,38 @@ def boost_deps():
   )
 
   new_git_repository(
+    name = "com_github_boost_foreach",
+    build_file = "@//thirdparty/boost:boost_foreach.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/foreach.git",
+  )
+
+  new_git_repository(
+    name = "com_github_boost_spirit",
+    build_file = "@//thirdparty/boost:boost_spirit.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/spirit.git",
+  )
+
+  new_git_repository(
+    name = "com_github_boost_circular_buffer",
+    build_file = "@//thirdparty/boost:boost_circular_buffer.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/circular_buffer.git",
+  )
+
+  new_git_repository(
     name = "com_github_boost_intrusive",
     build_file = "@//thirdparty/boost:boost_intrusive.BUILD",
     tag = "boost-1.79.0",
     remote = "https://github.com/boostorg/intrusive.git",
+  )
+
+  new_git_repository(
+    name = "com_github_boost_utility",
+    build_file = "@//thirdparty/boost:boost_utility.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/utility.git",
   )
 
   new_git_repository(
@@ -246,6 +282,14 @@ def boost_deps():
     tag = "boost-1.79.0",
     remote = "https://github.com/boostorg/optional.git",
   )
+
+  new_git_repository(
+    name = "com_github_boost_any",
+    build_file = "@//thirdparty/boost:boost_any.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/any.git",
+  )
+
 
   new_git_repository(
     name = "com_github_boost_parameter",
@@ -329,6 +373,20 @@ def boost_deps():
     build_file = "@//thirdparty/boost:boost_property_tree.BUILD",
     tag = "boost-1.79.0",
     remote = "https://github.com/boostorg/property_tree.git",
+  )
+
+  new_git_repository(
+    name = "com_github_boost_multi_index",
+    build_file = "@//thirdparty/boost:boost_multi_index.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/multi_index.git",
+  )
+
+  new_git_repository(
+    name = "com_github_boost_serialization",
+    build_file = "@//thirdparty/boost:boost_serialization.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/serialization.git",
   )
 
 

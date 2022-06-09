@@ -54,7 +54,7 @@ MutableSample::MutableSample(const Sample* source)
     size_ = 1;
     bitmap_ = 1;
   } else {
-    std::tie(size_, bitmap_) = TupleOutputUtils::get_size_and_bitmap(source->payload.float64);
+    std::tie(size_, bitmap_) = storage::TupleOutputUtils::get_size_and_bitmap(source->payload.float64);
   }
 }
 

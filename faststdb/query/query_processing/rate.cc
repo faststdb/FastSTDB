@@ -40,7 +40,7 @@ bool SimpleRate::put(MutableSample &mut) {
   return next_->put(mut);
 }
 
-void SimpleRate::set_error(Status status) {
+void SimpleRate::set_error(common::Status status) {
   next_->set_error(status);
 }
 

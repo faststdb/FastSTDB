@@ -6,7 +6,7 @@
 
 #include <memory>
 
-#include "faststdb/query/query_processing/queryprocessor_framework.h"
+#include "faststdb/query/queryprocessor_framework.h"
 
 namespace faststdb {
 namespace qp {

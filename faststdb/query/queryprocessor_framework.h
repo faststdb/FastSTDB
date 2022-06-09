@@ -8,7 +8,7 @@
 #include <stdexcept>
 
 #include "faststdb/common/basic.h"
-#include "faststdb/index/series_parser.h"
+#include "faststdb/index/seriesparser.h"
 #include "faststdb/storage/operators/operator.h"
 
 #include <boost/property_tree/ptree.hpp>
@@ -78,27 +78,27 @@ struct Aggregation {
 
   static std::tuple<common::Status, AggregationFunction> from_string(std::string str) {
     if (str == "min") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::MIN);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::MIN);
     } else if (str == "max") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::MAX);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::MAX);
     } else if (str == "sum") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::SUM);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::SUM);
     } else if (str == "count") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::CNT);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::CNT);
     } else if (str == "min_timestamp") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::MIN_TIMESTAMP);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::MIN_TIMESTAMP);
     } else if (str == "max_timestamp") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::MAX_TIMESTAMP);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::MAX_TIMESTAMP);
     } else if (str == "mean") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::MEAN);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::MEAN);
     } else if (str == "last") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::LAST);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::LAST);
     } else if (str == "first") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::FIRST);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::FIRST);
     } else if (str == "last_timestamp") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::LAST_TIMESTAMP);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::LAST_TIMESTAMP);
     } else if (str == "first_timestamp") {
-      return std::make_tuple(common:Status::Ok(), AggregationFunction::FIRST_TIMESTAMP);
+      return std::make_tuple(common::Status::Ok(), AggregationFunction::FIRST_TIMESTAMP);
     }
     return std::make_tuple(common::Status::BadArg(), AggregationFunction::CNT);
   }

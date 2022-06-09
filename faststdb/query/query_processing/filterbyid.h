@@ -26,8 +26,8 @@ struct FilterByIdNode : std::enable_shared_from_this<FilterByIdNode<Predicate>>,
 
   virtual void complete() { next_->complete(); }
 
-  virtual bool put(const Sample& sample) {
-    return op_(sample.paramid) ? next_->put(sample) : true;
+  virtual bool put(MutableSample& sample) {
+    return op_(sample.get_paramid()) ? next_->put(sample) : true;
   }
 
   void set_error(common::Status status) {

@@ -62,7 +62,7 @@ void EWMAPrediction::complete() {
 bool EWMAPrediction::put(MutableSample &mut) {
   if ((mut.payload_.sample.payload.type & PData::REGULLAR) == 0) {
     // Not supported, query require regullar data
-    set_error(AKU_EREGULLAR_EXPECTED);
+    set_error(common::Status::RegullarExpected());
     return false;
   }
   auto size = mut.size();
@@ -151,7 +151,7 @@ void SMAPrediction::complete() {
 bool SMAPrediction::put(MutableSample& mut) {
   if ((mut.payload_.sample.payload.type & PData::REGULLAR) == 0) {
     // Not supported, query require regullar data
-    set_error(AKU_EREGULLAR_EXPECTED);
+    set_error(common::Status::RegullarExpected());
     return false;
   }
   auto size = mut.size();

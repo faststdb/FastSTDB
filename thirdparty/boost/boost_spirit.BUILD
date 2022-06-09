@@ -3,7 +3,7 @@ package(default_visibility = ["//visibility:public"])
 licenses(["notice"])
 
 cc_library(
-  name = "utility",
+  name = "spirit",
   includes = [
     "include/",
   ],
@@ -13,5 +13,6 @@ cc_library(
   srcs = [
   ],
   deps = [
+    "@com_github_boost_optional//:optional",
   ]
 )

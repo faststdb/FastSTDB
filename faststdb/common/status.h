@@ -32,6 +32,9 @@ class Status {
     kNoMemory,
     kEAccess,
     kErrIO,
+    kRegullarExpected,
+    kHighCardinality,
+    kMissingDataNotSupported,
     kInternal,
     kUnknown
   };
@@ -112,6 +115,15 @@ class Status {
       case kInternal:
         error_msg = "Internal error";
         break;
+      case kRegullarExpected:
+        error_msg = "Regullar Expected";
+        break;
+      case kHighCardinality:
+        error_msg = "High Cardinality";
+        break;
+      case kMissingDataNotSupported:
+        error_msg = "Missing Data Not Supported";
+        break;
 
       case kUnknown:
       default:
@@ -146,6 +158,9 @@ class Status {
   ADD_UTILITY(EAccess,         kEAccess          )
   ADD_UTILITY(Internal,        kInternal         )
   ADD_UTILITY(ErrIO,           kErrIO            )
+  ADD_UTILITY(RegullarExpected, kRegullarExpected)
+  ADD_UTILITY(HighCardinality, kHighCardinality  )
+  ADD_UTILITY(MissingDataNotSupported, kMissingDataNotSupported)
 
   ADD_UTILITY(Unknown,         kUnknown          )
 
