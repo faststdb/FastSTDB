@@ -35,6 +35,7 @@ class Status {
     kRegullarExpected,
     kHighCardinality,
     kMissingDataNotSupported,
+    kQueryParsingError,
     kInternal,
     kUnknown
   };
@@ -124,6 +125,9 @@ class Status {
       case kMissingDataNotSupported:
         error_msg = "Missing Data Not Supported";
         break;
+      case kQueryParsingError:
+        error_msg = "Query Parsing Error";
+        break;
 
       case kUnknown:
       default:
@@ -161,6 +165,7 @@ class Status {
   ADD_UTILITY(RegullarExpected, kRegullarExpected)
   ADD_UTILITY(HighCardinality, kHighCardinality  )
   ADD_UTILITY(MissingDataNotSupported, kMissingDataNotSupported)
+  ADD_UTILITY(QueryParsingError, kQueryParsingError)
 
   ADD_UTILITY(Unknown,         kUnknown          )
 

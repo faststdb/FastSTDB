@@ -45,6 +45,14 @@ def boost_deps():
   )
 
   new_git_repository(
+    name = "com_github_boost_exception",
+    build_file = "@//thirdparty/boost:boost_exception.BUILD",
+    tag = "boost-1.79.0",
+    remote = "https://github.com/boostorg/exception.git",
+  )
+
+
+  new_git_repository(
     name = "com_github_boost_heap",
     build_file = "@//thirdparty/boost:boost_heap.BUILD",
     tag = "boost-1.79.0",

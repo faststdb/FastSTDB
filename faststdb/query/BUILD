@@ -6,6 +6,7 @@ load("@rules_proto//proto:defs.bzl", "proto_library")
 cc_library(
   name = "query",
   srcs = [
+    "queryparser.cc",
     "queryplan.cc",
     "queryprocessor.cc",
     "queryprocessor_framework.cc",
@@ -21,6 +22,7 @@ cc_library(
     "query_processing/top.cc",
   ],
   hdrs = [
+    "queryparser.h",
     "queryplan.h",
     "external_cursor.h",
     "internal_cursor.h",
@@ -47,6 +49,7 @@ cc_library(
     "@muparser//:libmuparser",
     "@com_github_boost_property_tree//:property_tree",
     "@com_github_boost_circular_buffer//:circular_buffer",
+    "@com_github_boost_exception//:exception",
   ],
 )
 

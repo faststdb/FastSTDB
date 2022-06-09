@@ -18,6 +18,7 @@
 #define FASTSTDB_QUERY_INTERNAL_CURSOR_H_
 
 #include "faststdb/common/basic.h"
+#include "faststdb/common/status.h"
 
 namespace faststdb {
 

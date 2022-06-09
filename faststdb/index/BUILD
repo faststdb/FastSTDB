@@ -35,3 +35,22 @@ cc_test(
   ],
 )
 
+cc_test(
+  name = "stringpool_test",
+  srcs = ["stringpool_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":index",
+  ],
+)
+
+cc_test(
+  name = "seriesparser_test",
+  srcs = ["seriesparser_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":index",
+  ],
+)
