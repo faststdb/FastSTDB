@@ -106,7 +106,7 @@ struct MetadataStorage : storage::VolumeRegistry {
   virtual void add_volume(const VolumeDesc& vol);
 
   // TODO: add pending size
-  virtual size_t pending_size() { return 0; }
+  virtual size_t pending_size() { return pending_volumes_.size(); }
 
   /**
    * @brief Get value of the configuration parameter

@@ -41,6 +41,7 @@ class Status {
     kGeneral,
     kLateWrite,
     kNotPermitted,
+    kBusy,
     kInternal,
     kUnknown
   };
@@ -148,6 +149,9 @@ class Status {
       case kNotPermitted:
         error_msg = "Not permitted";
         break;
+      case kBusy:
+        error_msg = "Busy";
+        break;
 
       case kUnknown:
       default:
@@ -191,6 +195,7 @@ class Status {
   ADD_UTILITY(General, kGeneral)
   ADD_UTILITY(LateWrite, kLateWrite)
   ADD_UTILITY(NotPermitted, kNotPermitted)
+  ADD_UTILITY(Busy,   kBusy)
 
   ADD_UTILITY(Unknown,         kUnknown          )
 

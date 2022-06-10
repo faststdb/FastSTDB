@@ -9,6 +9,7 @@ cc_library(
     "datetime.cc",
     "hash.cc",
     "mmapfile.cc",
+    "memorymappedfile.cc",
     "proto_configure.cc",
     "rwlock.cc",
   ],
@@ -22,6 +23,7 @@ cc_library(
     "hash.h",
     "logging.h",
     "mmapfile.h",
+    "memorymappedfile.h",
     "proto_configure.h",
     "rwlock.h",
     "status.h",
@@ -39,6 +41,7 @@ cc_library(
     "@com_google_protobuf//:protobuf",
     "@robin-map//:librobin-map",
     "@com_github_boost_date_time//:date_time",
+    "@apr//:libapr",
   ],
 )
 
@@ -75,6 +78,16 @@ cc_test(
 cc_test(
   name = "datetime_test",
   srcs = ["datetime_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":common",
+  ],
+)
+
+cc_test(
+  name = "memorymappedfile_test",
+  srcs = ["memorymappedfile_test.cc"],
   deps = [
     "@gtest//:gtest",
     "@gtest//:gtest_main",
