@@ -52,7 +52,6 @@ cc_library(
     "-std=c++14",
   ],
   deps = [
-    "@sqlite//:libsqlite",
     "@expat//:libexpat",
     "@apr//:libapr",
     "@lz4//:liblz4",

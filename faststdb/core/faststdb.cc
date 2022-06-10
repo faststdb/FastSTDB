@@ -25,6 +25,7 @@
 #include <apr_dbd.h>
 
 #include "faststdb/common/datetime.h"
+#include "faststdb/common/thread_local.h"
 #include "faststdb/core/cursor.h"
 #include "faststdb/core/storage.h"
 
@@ -32,6 +33,8 @@
 #include <boost/property_tree/json_parser.hpp>
 
 using namespace faststdb;
+
+typedef common::ThreadLocalStore<std::string> ThreadLocalMsg;
 
 //! Pool for `apr_dbd_init`
 static apr_pool_t* g_dbd_pool = nullptr;
@@ -59,7 +62,8 @@ int debug_recovery_report_dump(const char* path2db, const char* outfile) {
 }
 
 const char* error_message(int error_code) {
-  return common::Status((common::Status::ErrorCode)error_code).ToString();  
+  *(ThreadLocalMsg::Get()) = common::Status((common::Status::ErrorCode)error_code).ToString();
+  return ThreadLocalMsg::Get()->c_str();
 }
 
 struct CursorImpl : Cursor {
@@ -301,7 +305,7 @@ void destroy_session(Session* session) {
   DatabaseImpl::free(session);
 }
 
-int write_double_raw(Session* session, ParamId param_id, Timestamp timestamp,  double value) {
+int write_double_raw_sample(Session* session, ParamId param_id, Timestamp timestamp,  double value) {
   Sample sample;
   sample.timestamp = timestamp;
   sample.paramid = param_id;
@@ -312,7 +316,7 @@ int write_double_raw(Session* session, ParamId param_id, Timestamp timestamp,  d
   return status.Code();
 }
 
-int write(Session* session, const Sample* sample) {
+int write_sample(Session* session, const Sample* sample) {
   auto ises = reinterpret_cast<FSession*>(session);
   auto status = ises->add_sample(*sample);
   return status.Code();
@@ -382,14 +386,17 @@ int cursor_is_done(Cursor* pcursor) {
   return impl->is_done();
 }
 
-int cursor_is_error(Cursor* pcursor, Status* out_error_code_or_null) {
+int cursor_is_error(Cursor* pcursor) {
   auto impl = reinterpret_cast<CursorImpl*>(pcursor);
-  return impl->is_error(out_error_code_or_null);
+  common::Status out_error_code_or_null;
+  return impl->is_error(&out_error_code_or_null);
 }
 
-int cursor_is_error_ex(Cursor* pcursor, const char** error_message, Status* out_error_code_or_null) {
+int cursor_is_error_ex(Cursor* pcursor) {
   auto impl = reinterpret_cast<CursorImpl*>(pcursor);
-  return impl->is_error(error_message, out_error_code_or_null);
+  const char* error_message;
+  common::Status out_error_code_or_null;
+  return impl->is_error(&error_message, &out_error_code_or_null);
 }
 
 int timestamp_to_string(Timestamp ts, char* buffer, size_t buffer_size) {
@@ -461,7 +468,7 @@ int get_resource(const char* res_name, char* buf, size_t* bufsize) {
   } else if (res == "version") {
     std::string result = "FastSTDB " + std::to_string(FASTSTDB_VERSION);  // add build info
     if (result.size() > *bufsize) {
-      return common::kOverflow;
+      return common::Status::kOverflow;
     }
     std::copy(result.begin(), result.end(), buf);
     *bufsize = result.size();

@@ -20,12 +20,14 @@
 #include <cstddef>
 #include <memory>
 #include <mutex>
+#include <stack>
 #include <thread>
 #include <vector>
 #include <future>
 
 #include "faststdb/core/metadatastorage.h"
 #include "faststdb/index/seriesparser.h"
+#include "faststdb/query/queryprocessor_framework.h"
 
 #include "faststdb/storage/block_store.h"
 #include "faststdb/storage/nbtree.h"
@@ -34,6 +36,7 @@
 
 #include "faststdb/query/internal_cursor.h"
 
+#include <boost/property_tree/ptree.hpp>
 #include <boost/thread.hpp>
 #include <boost/thread/tss.hpp>
 

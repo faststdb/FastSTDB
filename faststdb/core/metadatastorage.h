@@ -97,13 +97,16 @@ struct MetadataStorage : storage::VolumeRegistry {
   /** Read list of volumes and their sequence numbers.
    * @throw std::runtime_error in a case of error
    */
-  virtual std::vector<VolumeDesc> get_volumes() const;
+  virtual std::vector<VolumeDesc> get_volumes();
 
   /**
    * @brief Add NEW volume synchroniously
    * @param vol is a volume description
    */
   virtual void add_volume(const VolumeDesc& vol);
+
+  // TODO: add pending size
+  virtual size_t pending_size() { return 0; }
 
   /**
    * @brief Get value of the configuration parameter

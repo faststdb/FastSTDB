@@ -16,6 +16,8 @@
  */
 #include "faststdb/core/storage.h"
 
+#include <fcntl.h>
+
 #include <algorithm>
 #include <atomic>
 #include <sstream>
@@ -258,7 +260,7 @@ int StorageSession::get_series_ids(const char* begin, const char* end, ParamId* 
 
   long nmetric = std::count(const_cast<const char*>(ob), ksbegin, '|') + 1;
   if (nmetric > static_cast<int>(ids_size)) {
-    return -1 * kBadArg;
+    return -1 * common::Status::kBadArg;
   }
 
   if (nmetric == 1) {
@@ -495,7 +497,7 @@ void Storage::run_recovery(const FineTuneParams &params,
   // metdata) followed by full log replay.
   std::vector<ParamId> new_ids;
   if (run_wal_recovery) {
-    auto ilog = std::make_shared<ShardedInputLog>(ccr, params.input_log_path);
+    auto ilog = std::make_shared<storage::ShardedInputLog>(ccr, params.input_log_path);
     run_inputlog_metadata_recovery(ilog.get(), &new_ids, mapping);
   }
   common::Status restore_status;
@@ -503,7 +505,7 @@ void Storage::run_recovery(const FineTuneParams &params,
   std::tie(restore_status, restored_ids) = cstore_->open_or_restore(*mapping, params.input_log_path == nullptr);
   std::copy(new_ids.begin(), new_ids.end(), std::back_inserter(restored_ids));
   if (run_wal_recovery) {
-    auto ilog = std::make_shared<ShardedInputLog>(ccr, params.input_log_path);
+    auto ilog = std::make_shared<storage::ShardedInputLog>(ccr, params.input_log_path);
     run_inputlog_recovery(ilog.get(), restored_ids);
     // This step will delete log files
   }
@@ -516,7 +518,7 @@ void Storage::initialize_input_log(const FineTuneParams &params) {
         std::to_string(params.input_log_volume_numb) + ", volume-size: " +
         std::to_string(params.input_log_volume_size);
 
-    inputlog_.reset(new ShardedInputLog(static_cast<int>(params.input_log_concurrency),
+    inputlog_.reset(new storage::ShardedInputLog(static_cast<int>(params.input_log_concurrency),
                                         params.input_log_path,
                                         params.input_log_volume_numb,
                                         params.input_log_volume_size));
@@ -526,7 +528,7 @@ void Storage::initialize_input_log(const FineTuneParams &params) {
 }
 
 void Storage::run_inputlog_metadata_recovery(
-    ShardedInputLog* ilog,
+    storage::ShardedInputLog* ilog,
     std::vector<ParamId>* restored_ids,
     std::unordered_map<ParamId, std::vector<storage::LogicAddr>>* mapping) {
   
@@ -544,12 +546,12 @@ void Storage::run_inputlog_metadata_recovery(
       curr_id = id;
     }
 
-    bool operator () (const InputLogDataPoint&) {
+    bool operator () (const storage::InputLogDataPoint&) {
       // Datapoints are ignored at this stage of the recovery.
       return true;
     }
 
-    bool operator () (const InputLogSeriesName& sname) {
+    bool operator () (const storage::InputLogSeriesName& sname) {
       auto strref = storage->global_matcher_.id2str(curr_id);
       if (strref.second) {
         // Fast path, name already added
@@ -583,7 +585,7 @@ void Storage::run_inputlog_metadata_recovery(
       return true;
     }
 
-    bool operator () (const InputLogRecoveryInfo& rinfo) {
+    bool operator () (const storage::InputLogRecoveryInfo& rinfo) {
       // Check that series exists
       auto strref = storage->global_matcher_.id2str(curr_id);
       if (!strref.second) {
@@ -626,7 +628,7 @@ void Storage::run_inputlog_metadata_recovery(
   bool proceed         = true;
   size_t nitems        = 0x1000;
   u64 nsegments        = 0;
-  std::vector<InputLogRow> rows(nitems);
+  std::vector<storage::InputLogRow> rows(nitems);
   LOG(INFO) << "WAL metadata recovery started";
 
   while (proceed) {
@@ -635,7 +637,7 @@ void Storage::run_inputlog_metadata_recovery(
     std::tie(status, outsize) = ilog->read_next(nitems, rows.data());
     if (status == common::Status::Ok() || (status == common::Status::NoData() && outsize > 0)) {
       for (u32 ix = 0; ix < outsize; ix++) {
-        const InputLogRow& row = rows.at(ix);
+        const storage::InputLogRow& row = rows.at(ix);
         visitor.reset(row.id);
         proceed = row.payload.apply_visitor(visitor);
       }
@@ -654,7 +656,7 @@ void Storage::run_inputlog_metadata_recovery(
   ilog->reopen();
 }
 
-void Storage::run_inputlog_recovery(ShardedInputLog* ilog, std::vector<ParamId> ids2restore) {
+void Storage::run_inputlog_recovery(storage::ShardedInputLog* ilog, std::vector<ParamId> ids2restore) {
   struct Visitor : boost::static_visitor<bool> {
     Storage* storage;
     Sample sample;
@@ -670,7 +672,7 @@ void Storage::run_inputlog_recovery(ShardedInputLog* ilog, std::vector<ParamId> 
       sample.paramid = id;
     }
 
-    bool operator () (const InputLogDataPoint& point) {
+    bool operator () (const storage::InputLogDataPoint& point) {
       sample.timestamp        = point.timestamp;
       sample.payload.float64  = point.value;
       sample.payload.size     = sizeof(Sample);
@@ -704,11 +706,11 @@ void Storage::run_inputlog_recovery(ShardedInputLog* ilog, std::vector<ParamId> 
       return true;
     }
 
-    bool operator () (const InputLogSeriesName&) {
+    bool operator () (const storage::InputLogSeriesName&) {
       return true;
     }
 
-    bool operator () (const InputLogRecoveryInfo&) {
+    bool operator () (const storage::InputLogRecoveryInfo&) {
       return true;
     }
   };
@@ -718,7 +720,7 @@ void Storage::run_inputlog_recovery(ShardedInputLog* ilog, std::vector<ParamId> 
   bool proceed    = true;
   size_t nitems   = 0x1000;
   u64 nsegments   = 0;
-  std::vector<InputLogRow> rows(nitems);
+  std::vector<storage::InputLogRow> rows(nitems);
   LOG(INFO) << "WAL recovery started";
   std::unordered_set<ParamId> idfilter(ids2restore.begin(),
                                        ids2restore.end());
@@ -729,7 +731,7 @@ void Storage::run_inputlog_recovery(ShardedInputLog* ilog, std::vector<ParamId> 
     std::tie(status, outsize) = ilog->read_next(nitems, rows.data());
     if (status == common::Status::Ok() || (status == common::Status::NoData() && outsize > 0)) {
       for (u32 ix = 0; ix < outsize; ix++) {
-        const InputLogRow& row = rows.at(ix);
+        const storage::InputLogRow& row = rows.at(ix);
         if (idfilter.count(row.id)) {
           visitor.reset(row.id);
           proceed = row.payload.apply_visitor(visitor);
@@ -879,7 +881,7 @@ void dump_tree(std::ostream &stream,
       std::tie(status, block) = bstore->read_iovec_block(curr);
       if (status != common::Status::Ok()) {
         stream << _tag("addr") << afmt(curr) << "</addr>" << std::endl;
-        stream << _tag("fail") << StatusUtil::c_str(status) << "</fail>" << std::endl;
+        stream << _tag("fail") << status.ToString() << "</fail>" << std::endl;
         continue;
       }
       auto subtreeref = block->get_cheader<SubtreeRef>();
@@ -1225,9 +1227,9 @@ void Storage::close() {
   if (!input_log_path_.empty()) {
     int ccr = 0;
     common::Status status;
-    std::tie(status, ccr) = ShardedInputLog::find_logs(input_log_path_.c_str());
+    std::tie(status, ccr) = storage::ShardedInputLog::find_logs(input_log_path_.c_str());
     if (status == common::Status::Ok() && ccr > 0) {
-      auto ilog = std::make_shared<ShardedInputLog>(ccr, input_log_path_.c_str());
+      auto ilog = std::make_shared<storage::ShardedInputLog>(ccr, input_log_path_.c_str());
       ilog->delete_files();
     }
   }
@@ -1628,7 +1630,7 @@ common::Status Storage::remove_storage(const char* file_name, const char* wal_pa
     auto stats = fstore->get_stats();
     if (stats.nblocks != 0) {
       // DB is not empty
-      return common::Status:NotPermitted();
+      return common::Status::NotPermitted();
     }
   }
   meta.reset();
@@ -1665,10 +1667,10 @@ common::Status Storage::remove_storage(const char* file_name, const char* wal_pa
   std::for_each(volume_names.begin(), volume_names.end(), delete_file);
 
   int card;
-  std::tie(status, card) = ShardedInputLog::find_logs(wal_path);
+  std::tie(status, card) = storage::ShardedInputLog::find_logs(wal_path);
   if (status == common::Status::Ok() && card > 0) {
     // Start recovery
-    auto ilog = std::make_shared<ShardedInputLog>(card, wal_path);
+    auto ilog = std::make_shared<storage::ShardedInputLog>(card, wal_path);
     ilog->delete_files();
   }
 

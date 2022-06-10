@@ -196,15 +196,15 @@ EXPORT int parse_duration(const char* str, int* value);
  * @param value parameter value
  * @returns operation status
  */
-EXPORT int write_double_raw(Session* session, ParamId param_id,
-                            Timestamp timestamp,  double value);
+EXPORT int write_double_raw_sample(Session* session, ParamId param_id,
+                                   Timestamp timestamp,  double value);
 
 /** Write measurement to DB
  * @param ist is an opened ingestion stream
  * @param sample should contain valid measurement value
  * @returns operation status
  */
-EXPORT int write(Session* ist, const Sample* sample);
+EXPORT int write_sample(Session* ist, const Sample* sample);
 
 
 //---------
@@ -250,15 +250,14 @@ EXPORT size_t cursor_read(Cursor* cursor, void* dest, size_t dest_size);
 EXPORT int cursor_is_done(Cursor* pcursor);
 
 //! Check cursor error state. Returns zero value if everything is OK, non zero value otherwise.
-EXPORT int cursor_is_error(Cursor* pcursor, Status* out_error_code_or_null);
+EXPORT int cursor_is_error(Cursor* pcursor);
 
 /**
  * Check cursor error state and error message.
  * Returns zero value if everything is OK, non zero value otherwise.
  */
 EXPORT int cursor_is_error_ex(Cursor*  pcursor,
-                              const char** error_message,
-                              Status*  out_error_code_or_null);
+                              const char** error_message);
 
 /** Convert timestamp to string if possible, return string length
  * @return 0 on bad string, -LEN if buffer is too small, LEN on success
@@ -304,3 +303,5 @@ EXPORT int get_resource(const char* res_name, char* buf, size_t* bufsize);
 EXPORT int debug_report_dump(const char* path2db, const char* outfile);
 
 EXPORT int debug_recovery_report_dump(const char* path2db, const char* outfile);
+
+#endif  // FASTSTDB_FASTSTDB_H_

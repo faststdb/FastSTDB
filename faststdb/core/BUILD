@@ -20,6 +20,7 @@ cc_library(
   alwayslink = 1,
   copts = [
     "-std=c++14",
+    "-fopenmp",
   ],
   linkopts = [
     "-ldl",
@@ -29,15 +30,16 @@ cc_library(
     "//faststdb/index:index",
     "//faststdb/query:query",
     "@com_github_boost_thread//:thread",
+    "@sqlite//:libsqlite",
   ],
 )
 
-#cc_test(
-#  name = "metadatastorage_test",
-#  srcs = ["metadatastorage_test.cc"],
-#  deps = [
-#    "@gtest//:gtest",
-#    "@gtest//:gtest_main",
-#    ":core",
-#  ],
-#)
+cc_test(
+  name = "metadatastorage_test",
+  srcs = ["metadatastorage_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":core",
+  ],
+)

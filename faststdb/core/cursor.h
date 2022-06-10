@@ -33,14 +33,14 @@ namespace faststdb {
 std::ostream& operator<<(std::ostream& st, Sample res);
 
 //! Combined cursor interface
-struct Cursor : InternalCursor, ExternalCursor {};
+struct CursorInterface : InternalCursor, ExternalCursor {};
 
 /**
  * @brief The ConcurrentCursor struct
  * Implements cursor interface. Starts computation in parallel thread.
  * All communication is done through message queue.
  */
-struct ConcurrentCursor : Cursor {
+struct ConcurrentCursor : CursorInterface {
   struct BufferT {
     std::vector<u8> buf;
     size_t rdpos;

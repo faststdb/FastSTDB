@@ -34,7 +34,7 @@ genrule(
         'cd $$TMP_DIR',
         'mkdir build',
         'cd build',
-        'cmake ../  -DCMAKE_INSTALL_PREFIX=$$INSTALL_DIR -DCMAKE_INSTALL_LIBDIR=$$INSTALL_DIR/lib -DBUILD_SHARED_LIBS=OFF',
+        'cmake ../  -DCMAKE_INSTALL_PREFIX=$$INSTALL_DIR -DCMAKE_INSTALL_LIBDIR=$$INSTALL_DIR/lib -DBUILD_SHARED_LIBS=OFF -DENABLE_OPENMP=OFF',
         'make',
         'make install',
         'rm -rf $$TMP_DIR',

@@ -42,6 +42,7 @@ cc_library(
   alwayslink = 1,
   copts = [
     "-std=c++14",
+    "-fopenmp",
   ],
   deps = [
     "//faststdb/storage:storage",

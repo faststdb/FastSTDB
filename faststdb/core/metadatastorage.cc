@@ -291,7 +291,7 @@ std::vector<MetadataStorage::UntypedTuple> MetadataStorage::select_query(const c
   return tuples;
 }
 
-std::vector<MetadataStorage::VolumeDesc> MetadataStorage::get_volumes() const {
+std::vector<MetadataStorage::VolumeDesc> MetadataStorage::get_volumes() {
   const char* query =
       "SELECT id, path, version, nblocks, capacity, generation FROM faststdb_volumes;";
   std::vector<VolumeDesc> tuples;
