@@ -18,6 +18,8 @@
 
 #include <boost/regex.hpp>
 
+#include "faststdb/common/logging.h"
+
 namespace faststdb {
 
 LegacyStringPool::LegacyStringPool()
@@ -151,7 +153,7 @@ u64 StringPool::add(const char* begin, const char* end) {
   }
   bin->push_back('\0');
   std::atomic_fetch_add(&counter, (size_t)1);
-  return bin_index*MAX_BIN_SIZE + offset;
+  return bin_index * MAX_BIN_SIZE + offset;
 }
 
 StringT StringPool::str(u64 bits) const {

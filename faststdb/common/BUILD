@@ -95,3 +95,13 @@ cc_test(
   ],
 )
 
+cc_test(
+  name = "crc32c_test",
+  srcs = ["crc32c_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    ":common",
+  ],
+)
+

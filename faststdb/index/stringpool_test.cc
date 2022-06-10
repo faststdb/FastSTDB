@@ -18,6 +18,8 @@
 
 #include "gtest/gtest.h"
 
+#include "faststdb/common/logging.h"
+
 namespace faststdb {
 
 TEST(TestStringPool, Test) {
@@ -30,6 +32,45 @@ TEST(TestStringPool, Test) {
   auto result_bar = pool.str(id_bar);
   EXPECT_STREQ(std::string(result_foo.first, result_foo.first + result_foo.second).c_str(), foo);
   EXPECT_STREQ(std::string(result_bar.first, result_bar.first + result_bar.second).c_str(), bar);
+}
+
+TEST(LegacyStringPool, Test_1) {
+  LegacyStringPool spool;
+  const char* foo = "host=1 region=A";
+  const char* bar = "host=1 region=B";
+  const char* buz = "host=2 region=C";
+
+  // Insert first
+  spool.add(foo, foo + strlen(foo));
+
+  StringPoolOffset offset = {};  // zero offset initially
+  auto res = spool.regex_match("host=1 \\w+=\\w", &offset);
+  EXPECT_EQ(res.size(), 1u);
+  EXPECT_TRUE(strcmp(foo, res.at(0).first) == 0);
+  EXPECT_EQ(res.at(0).second, strlen(foo));
+
+  // Insert next
+  spool.add(bar, bar + strlen(bar));
+
+  // Continue search
+  res = spool.regex_match("host=1 \\w+=\\w", &offset);
+  EXPECT_EQ(res.size(), 1u);
+  EXPECT_TRUE(strcmp(bar, res.at(0).first) == 0);
+  EXPECT_EQ(res.at(0).second, strlen(bar));
+
+  // Insert last
+  spool.add(buz, buz + strlen(buz));
+  res = spool.regex_match("host=1 \\w+=\\w", &offset);
+  EXPECT_EQ(res.size(), 0u);
+
+  StringPoolOffset offset2 = {};
+  res = spool.regex_match("host=1 \\w+=\\w", &offset2);
+  EXPECT_EQ(res.size(), 2u);
+  EXPECT_TRUE(strcmp(foo, res.at(0).first) == 0);
+  EXPECT_EQ(res.at(0).second, strlen(foo));
+
+  EXPECT_TRUE(strcmp(bar, res.at(1).first) == 0);
+  EXPECT_EQ(res.at(1).second, strlen(bar));
 }
 
 }  // namespace faststdb
