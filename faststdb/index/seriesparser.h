@@ -228,7 +228,7 @@ struct SeriesParser {
   static std::tuple<common::Status, StringT> filter_tags(StringT const& input,
                                                          StringTools::SetT const& tags,
                                                          char* out,
-                                                         bool inv=false);
+                                                         bool inv = false);
 };
 
 enum class GroupByOpType {

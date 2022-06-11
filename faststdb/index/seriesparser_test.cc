@@ -76,76 +76,72 @@ TEST(SeriesParser, Test_seriesparser_2) {
   EXPECT_EQ(common::Status::BadData(), status);
 }
 
+TEST(SeriesParser, Test_seriesparser_3) {
+  const char* series1 = "cpu region=europe host";
+  auto len = strlen(series1);
+  char out[27];
+  const char* pend = nullptr;
+  auto status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pend, &pend);
+  EXPECT_EQ(common::Status::BadData(), status);
+}
+
+TEST(SeriesParser, Test_seriesparser_4) {
+  auto len = LIMITS_MAX_SNAME + 1;
+  char series1[len];
+  char out[len];
+  const char* pend = nullptr;
+  auto status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pend, &pend);
+  EXPECT_EQ(common::Status::BadData(), status);
+}
+
+TEST(SeriesParser, Test_seriesparser_5) {
+  auto len = LIMITS_MAX_SNAME - 1;
+  char series1[len];
+  char out[10];
+  const char* pend = nullptr;
+  auto status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + 10, &pend, &pend);
+  EXPECT_EQ(common::Status::BadArg(), status);
+}
+
+TEST(SeriesParser, Test_seriesparser_6) {
+  const char* tags[] = {
+    "tag2",
+    "tag4",
+    "tag7",  // doesn't exists in series name
+  };
+  const char* series = "metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5";
+  auto name = std::make_pair(series, strlen(series));
+  char out[LIMITS_MAX_SNAME];
+  common::Status status;
+  SeriesParser::StringT result;
+  StringTools::SetT filter = StringTools::create_set(2);
+  filter.insert(std::make_pair(tags[0], 4));
+  filter.insert(std::make_pair(tags[1], 4));
+  filter.insert(std::make_pair(tags[2], 4));
+  std::tie(status, result) = SeriesParser::filter_tags(name, filter, out);
+  EXPECT_EQ(common::Status::Ok(), status);
+  EXPECT_STREQ("metric tag2=2 tag4=4", std::string(result.first, result.first + result.second).c_str());
+}
+
+TEST(SeriesParser, Test_seriesparser_7) {
+  const char* series1 = "cpu\\ user region=europe host=127.0.0.1";
+  auto len = strlen(series1);
+  char out[40];
+  const char* pbegin = nullptr;
+  const char* pend = nullptr;
+  auto status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pbegin, &pend);
+
+  EXPECT_EQ(common::Status::Ok(), status);
+
+  std::string expected = "cpu\\ user host=127.0.0.1 region=europe";
+  std::string actual = std::string(static_cast<const char*>(out), pend);
+  EXPECT_STREQ(expected.c_str(), actual.c_str());
+
+  std::string keystr = std::string(pbegin, pend);
+  EXPECT_STREQ("host=127.0.0.1 region=europe", keystr.c_str());
+}
+
 #if 0
-BOOST_AUTO_TEST_CASE(Test_seriesparser_3) {
-
-    const char* series1 = "cpu region=europe host";
-    auto len = strlen(series1);
-    char out[27];
-    const char* pend = nullptr;
-    int status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pend, &pend);
-    BOOST_REQUIRE_EQUAL(status, AKU_EBAD_DATA);
-}
-
-BOOST_AUTO_TEST_CASE(Test_seriesparser_4) {
-
-    auto len = AKU_LIMITS_MAX_SNAME + 1;
-    char series1[len];
-    char out[len];
-    const char* pend = nullptr;
-    int status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pend, &pend);
-    BOOST_REQUIRE_EQUAL(status, AKU_EBAD_DATA);
-}
-
-BOOST_AUTO_TEST_CASE(Test_seriesparser_5) {
-
-    auto len = AKU_LIMITS_MAX_SNAME - 1;
-    char series1[len];
-    char out[10];
-    const char* pend = nullptr;
-    int status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + 10, &pend, &pend);
-    BOOST_REQUIRE_EQUAL(status, AKU_EBAD_ARG);
-}
-
-BOOST_AUTO_TEST_CASE(Test_seriesparser_6) {
-    const char* tags[] = {
-        "tag2",
-        "tag4",
-        "tag7",  // doesn't exists in series name
-    };
-    const char* series = "metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5";
-    auto name = std::make_pair(series, strlen(series));
-    char out[AKU_LIMITS_MAX_SNAME];
-    aku_Status status;
-    SeriesParser::StringT result;
-    StringTools::SetT filter = StringTools::create_set(2);
-    filter.insert(std::make_pair(tags[0], 4));
-    filter.insert(std::make_pair(tags[1], 4));
-    filter.insert(std::make_pair(tags[2], 4));
-    std::tie(status, result) = SeriesParser::filter_tags(name, filter, out);
-    BOOST_REQUIRE_EQUAL(status, AKU_SUCCESS);
-    BOOST_REQUIRE_EQUAL(std::string("metric tag2=2 tag4=4"), std::string(result.first, result.first + result.second));
-}
-
-BOOST_AUTO_TEST_CASE(Test_seriesparser_7) {
-
-    const char* series1 = "cpu\\ user region=europe host=127.0.0.1";
-    auto len = strlen(series1);
-    char out[40];
-    const char* pbegin = nullptr;
-    const char* pend = nullptr;
-    int status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pbegin, &pend);
-
-    BOOST_REQUIRE_EQUAL(status, AKU_SUCCESS);
-
-    std::string expected = "cpu\\ user host=127.0.0.1 region=europe";
-    std::string actual = std::string(static_cast<const char*>(out), pend);
-    BOOST_REQUIRE_EQUAL(expected, actual);
-
-    std::string keystr = std::string(pbegin, pend);
-    BOOST_REQUIRE_EQUAL("host=127.0.0.1 region=europe", keystr);
-}
-
 BOOST_AUTO_TEST_CASE(Test_seriesparser_8) {
 
     const char* series1 = "cpu region=us\\ east host=127.0.0.1\\ aka\\ localhost\\ ";

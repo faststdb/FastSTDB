@@ -286,22 +286,22 @@ std::vector<PlainSeriesMatcher::SeriesNameT> PlainSeriesMatcher::regex_match(con
 
 //! Move pointer to the of the whitespace, return this pointer or end on error
 static const char* skip_space(const char* p, const char* end) {
-  while(p < end && (*p == ' ' || *p == '\t')) {
+  while (p < end && (*p == ' ' || *p == '\t')) {
     p++;
   }
   return p;
 }
 
 static StringTools::StringT get_tag_name(const char* p, const char* end) {
-  StringTools::StringT EMPTY = {nullptr, 0};
+  StringTools::StringT EMPTY = { nullptr, 0 };
   auto begin = p;
-  while(p < end && *p != '=' && *p != ' ' && *p != '\t') {
+  while (p < end && *p != '=' && *p != ' ' && *p != '\t') {
     p++;
   }
   if (p == end || *p != '=') {
     return EMPTY;
   }
-  return {begin, p - begin};
+  return { begin, p - begin };
 }
 
 static const char ESC_CHAR = '\\';
@@ -468,7 +468,8 @@ common::Status SeriesParser::to_canonical_form(const char* begin, const char* en
   return common::Status::Ok();
 }
 
-std::tuple<common::Status, SeriesParser::StringT> SeriesParser::filter_tags(SeriesParser::StringT const& input, const StringTools::SetT &tags, char* out, bool inv) {
+std::tuple<common::Status, SeriesParser::StringT> SeriesParser::filter_tags(
+    SeriesParser::StringT const& input, const StringTools::SetT &tags, char* out, bool inv) {
   StringT NO_RESULT = {};
   char* out_begin = out;
   char* it_out = out;
@@ -489,7 +490,7 @@ std::tuple<common::Status, SeriesParser::StringT> SeriesParser::filter_tags(Seri
   const char* last_tag;
   auto ix_tag = 0u;
   bool error = false;
-  while(it < end && ix_tag < LIMITS_MAX_TAGS) {
+  while (it < end && ix_tag < LIMITS_MAX_TAGS) {
     last_tag = it;
     it = skip_tag(it, end, &error);
     if (!error) {

@@ -37,11 +37,13 @@ cc_library(
     "-DBOOST_DATE_TIME_POSIX_TIME_STD_CONFIG",
   ],
   deps = [
+    "@sqlite//:libsqlite",
+    "@expat//:libexpat",
+    "@apr//:libapr",
     "@glog",
     "@com_google_protobuf//:protobuf",
     "@robin-map//:librobin-map",
     "@com_github_boost_date_time//:date_time",
-    "@apr//:libapr",
   ],
 )
 
