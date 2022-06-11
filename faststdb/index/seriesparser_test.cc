@@ -141,45 +141,42 @@ TEST(SeriesParser, Test_seriesparser_7) {
   EXPECT_STREQ("host=127.0.0.1 region=europe", keystr.c_str());
 }
 
-#if 0
-BOOST_AUTO_TEST_CASE(Test_seriesparser_8) {
+TEST(SeriesParser, Test_seriesparser_8) {
 
-    const char* series1 = "cpu region=us\\ east host=127.0.0.1\\ aka\\ localhost\\ ";
-    auto len = strlen(series1);
-    char out[140];
-    const char* pbegin = nullptr;
-    const char* pend = nullptr;
-    int status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pbegin, &pend);
+  const char* series1 = "cpu region=us\\ east host=127.0.0.1\\ aka\\ localhost\\ ";
+  auto len = strlen(series1);
+  char out[140];
+  const char* pbegin = nullptr;
+  const char* pend = nullptr;
+  auto status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pbegin, &pend);
 
-    BOOST_REQUIRE_EQUAL(status, AKU_SUCCESS);
+  EXPECT_EQ(common::Status::Ok(), status);
 
-    std::string expected = "cpu host=127.0.0.1\\ aka\\ localhost\\  region=us\\ east";
-    std::string actual = std::string(static_cast<const char*>(out), pend);
-    BOOST_REQUIRE_EQUAL(expected, actual);
+  std::string expected = "cpu host=127.0.0.1\\ aka\\ localhost\\  region=us\\ east";
+  std::string actual = std::string(static_cast<const char*>(out), pend);
+  EXPECT_STREQ(expected.c_str(), actual.c_str());
 
-    std::string keystr = std::string(pbegin, pend);
-    BOOST_REQUIRE_EQUAL("host=127.0.0.1\\ aka\\ localhost\\  region=us\\ east", keystr);
+  std::string keystr = std::string(pbegin, pend);
+  EXPECT_STREQ("host=127.0.0.1\\ aka\\ localhost\\  region=us\\ east", keystr.c_str());
 }
 
-BOOST_AUTO_TEST_CASE(Test_seriesparser_9) {
+TEST(SeriesParser, Test_seriesparser_9) {
+  const char* series1 = "\\ cpu\\user\\  \\ host\\ name=foo\\bar\\";
+  auto len = strlen(series1);
+  char out[0x140];
+  const char* pbegin = nullptr;
+  const char* pend = nullptr;
+  auto status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pbegin, &pend);
 
-    const char* series1 = "\\ cpu\\user\\  \\ host\\ name=foo\\bar\\";
-    auto len = strlen(series1);
-    char out[0x140];
-    const char* pbegin = nullptr;
-    const char* pend = nullptr;
-    int status = SeriesParser::to_canonical_form(series1, series1 + len, out, out + len, &pbegin, &pend);
+  EXPECT_EQ(common::Status::Ok(), status);
 
-    BOOST_REQUIRE_EQUAL(status, AKU_SUCCESS);
+  std::string expected = "\\ cpu\\user\\  \\ host\\ name=foo\\bar\\";
+  std::string actual = std::string(static_cast<const char*>(out), pend);
+  EXPECT_STREQ(expected.c_str(), actual.c_str());
 
-    std::string expected = "\\ cpu\\user\\  \\ host\\ name=foo\\bar\\";
-    std::string actual = std::string(static_cast<const char*>(out), pend);
-    BOOST_REQUIRE_EQUAL(expected, actual);
-
-    std::string keystr = std::string(pbegin, pend);
-    BOOST_REQUIRE_EQUAL("\\ host\\ name=foo\\bar\\", keystr);
+  std::string keystr = std::string(pbegin, pend);
+  EXPECT_STREQ("\\ host\\ name=foo\\bar\\", keystr.c_str());
 }
-#endif
 
 }  // namespace faststdb
 
