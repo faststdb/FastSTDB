@@ -22,6 +22,62 @@ namespace faststdb {
 
 StringPool stringpool;
 
+TEST(TestCompressedPList, Test_1) {
+  u64 id = 1;
+  CompressedPList pList;
+  for (auto i = 0; i < 1000; ++i) {
+    pList.add(id++);
+  }
+  EXPECT_EQ(1000, pList.cardinality());
+
+  id = 1;
+  auto iter = pList.begin();
+  for (auto i = 0; i < 1000; ++i, ++iter) {
+    EXPECT_EQ(id++, *iter);
+  }
+}
+
+TEST(TestCompressedPList, Test_2) {
+  u64 id = 1;
+  CompressedPList pList;
+  for (auto i = 0; i < 1000; ++i, id += 3) {
+    pList.add(id);
+  }
+  EXPECT_EQ(1000, pList.cardinality());
+
+  id = 1;
+  auto iter = pList.begin();
+  for (auto i = 0; i < 1000; ++i, ++iter, id += 3) {
+    EXPECT_EQ(id, *iter);
+  }
+  LOG(INFO) << "getSizeInBytes=" << pList.getSizeInBytes();
+}
+
+TEST(TestCompressedPList, Test_3) {
+  u64 id = 1;
+  CompressedPList pList;
+  for (auto i = 0; i < 1000; ++i) {
+    pList.add(id);
+    id += i % 2;
+  }
+  EXPECT_EQ(1000, pList.cardinality());
+
+  id = 1;
+  auto iter = pList.begin();
+  for (auto i = 0; i < 1000; ++i, ++iter) {
+    EXPECT_EQ(id, *iter);
+    id += i % 2;
+  }
+
+  id = 1;
+  auto uniqPList = pList.unique();
+  EXPECT_EQ(500, uniqPList.cardinality());
+  auto iter2 = uniqPList.begin();
+  for (auto i = 0; i < 500; ++i, ++iter2, ++id) {
+    EXPECT_EQ(id, *iter2);
+  }
+}
+
 TEST(TestSeriesNameTopology, Test_1) {
   SeriesNameTopology series_name_topology;
   const char* series = "metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5";
