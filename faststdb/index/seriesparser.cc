@@ -28,8 +28,7 @@ static const StringT EMPTY = std::make_pair(nullptr, 0);
 
 SeriesMatcher::SeriesMatcher(i64 starting_id)
     : table(StringTools::create_table(0x1000))
-    , series_id(starting_id)
-{
+      , series_id(starting_id) {
   if (starting_id == 0u) {
     LOG(FATAL) << "Bad series ID";
   }
@@ -41,7 +40,7 @@ i64 SeriesMatcher::add(const char* begin, const char* end) {
   auto id = prev_id;
   if (*begin == '!') {
     // Series name starts with ! which mean that we're dealing with event
-    id = -1*id;
+    id = -1 * id;
   }
   common::Status status;
   StringT sname;
@@ -69,7 +68,6 @@ void SeriesMatcher::_add(const char*  begin, const char* end, i64 id) {
   common::Status status;
   StringT sname;
   std::tie(status, sname) = index.append(begin, end);
-  // StatusUtil::throw_on_error(status);
   table[sname] = id;
   inv_table[id] = sname;
 }
@@ -186,8 +184,7 @@ size_t SeriesMatcher::pool_memory_use() const {
 
 PlainSeriesMatcher::PlainSeriesMatcher(i64 starting_id)
     : table(StringTools::create_table(0x1000))
-    , series_id(starting_id)
-{
+    , series_id(starting_id) {
   if (starting_id == 0u) {
     LOG(FATAL) << "Bad series ID";
   }
@@ -371,8 +368,7 @@ static const char* skip_tag(const char* begin, const char* end, bool *error) {
 common::Status SeriesParser::to_canonical_form(const char* begin, const char* end,
                                                char* out_begin, char* out_end,
                                                const char** keystr_begin,
-                                               const char** keystr_end)
-{
+                                               const char** keystr_end) {
   // Verify args
   if (end < begin) {
     return common::Status::BadArg();
@@ -524,8 +520,12 @@ std::tuple<common::Status, SeriesParser::StringT> SeriesParser::filter_tags(
   return std::make_tuple(common::Status::Ok(), std::make_pair(out_begin, it_out - out_begin));
 }
 
-GroupByTag::GroupByTag(const SeriesMatcher &matcher, std::string metric, std::vector<std::string> const& tags, GroupByOpType op)
-    : matcher_(matcher)
+GroupByTag::GroupByTag(
+    const SeriesMatcher &matcher,
+    std::string metric,
+    std::vector<std::string> const& tags,
+    GroupByOpType op)
+   : matcher_(matcher)
     , offset_{}
     , prev_size_(0)
     , metrics_({metric})
@@ -533,8 +533,7 @@ GroupByTag::GroupByTag(const SeriesMatcher &matcher, std::string metric, std::ve
     , tags_(tags)
     , local_matcher_(1ul)
     , snames_(StringTools::create_set(64))
-    , type_(op)
-{
+    , type_(op) {
   refresh_();
 }
 
@@ -551,8 +550,7 @@ GroupByTag::GroupByTag(const SeriesMatcher &matcher,
     , tags_(tags)
     , local_matcher_(1ul)
     , snames_(StringTools::create_set(64))
-    , type_(op)
-{
+    , type_(op) {
   refresh_();
 }
 

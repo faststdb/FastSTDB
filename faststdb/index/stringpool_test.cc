@@ -73,5 +73,58 @@ TEST(LegacyStringPool, Test_1) {
   EXPECT_EQ(res.at(1).second, strlen(bar));
 }
 
+TEST(TestStringTools, Test_1) {
+  StringTools::TableT table = StringTools::create_table(20);
+  {
+    const char* keystr = "i am good";
+    StringTools::StringT key;
+    key.first = keystr;
+    key.second = strlen(keystr);
+    table[key] = 2;
+  }
+  {
+    const char* keystr = "i am good2";
+    StringTools::StringT key;
+    key.first = keystr;
+    key.second = strlen(keystr);
+    table[key] = 3;
+  }
+  {
+    const char* keystr = "i am good";
+    StringTools::StringT key;
+    key.first = keystr;
+    key.second = strlen(keystr);
+    auto iter = table.find(key);
+    EXPECT_TRUE(iter != table.end());
+  }
+}
+
+TEST(TestStringTools, Test_2) {
+  StringTools::L2TableT table = StringTools::create_l2_table(10);
+
+  const char* keystr = "i am good";
+  StringTools::StringT key;
+  key.first = keystr;
+  key.second = strlen(keystr);
+  table[key] = StringTools::SetT(1);
+
+  StringPool string_pool;
+  std::vector<u64> ids;
+
+  for (auto i = 0; i < 100; ++i) {
+    auto valuestr = std::to_string(i);
+    auto id = string_pool.add(valuestr.c_str(), valuestr.c_str() + valuestr.length());
+    ids.emplace_back(id);
+    auto value = string_pool.str(id);
+    table[key].insert(value);
+  }
+
+  for (auto i = 0; i < 100; ++i) {
+    auto valuestr = std::to_string(i);
+    auto value = string_pool.str(ids[i]);
+    EXPECT_EQ(1, table[key].count(value));
+  }
+}
+
 }  // namespace faststdb
 

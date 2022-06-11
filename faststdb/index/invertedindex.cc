@@ -665,7 +665,7 @@ void SeriesNameTopology::add_name(StringT name) {
     if (!split_pair(tagstr, &tag, &val)) {
       error = true;
     }
-    StringTools::L2TableT& tagtable = it->second;
+    StringTools::L2TableT& tagtable = *const_cast<StringTools::L2TableT*>(&it->second);  // compatable with tsl::robin_map/set
     auto tagit = tagtable.find(tag);
     if (tagit == tagtable.end()) {
       auto valtab = StringTools::create_set(1024);
@@ -673,7 +673,7 @@ void SeriesNameTopology::add_name(StringT name) {
       tagtable[tag] = valtab; std::move(valtab);
       tagit = tagtable.find(tag);
     }
-    StringTools::SetT& valueset = tagit->second;
+    StringTools::SetT& valueset = *const_cast<StringTools::SetT*>(&tagit->second);  // compatable with tsl::robin_map/set
     valueset.insert(val);
     // next
     p = skip_space(tag_end, end);

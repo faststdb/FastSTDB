@@ -40,6 +40,8 @@ TEST(SeriesMatcher, Test_seriesmatcher_0) {
   EXPECT_EQ(buz_id, 0ul);
 }
 
+
+
 TEST(SeriesParser, Test_seriesparser_0) {
   const char* series1 = " cpu  region=europe   host=127.0.0.1 ";
   auto len = strlen(series1);

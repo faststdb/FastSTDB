@@ -88,7 +88,7 @@ struct SeriesMatcher : SeriesMatcherBase {
   std::vector<SeriesNameT> names;      //! List of recently added names
   mutable std::mutex       mutex;      //! Mutex for shared data
 
-  SeriesMatcher(i64 starting_id=FASTSTDB_STARTING_SERIES_ID);
+  SeriesMatcher(i64 starting_id = FASTSTDB_STARTING_SERIES_ID);
 
   /** Add new string to matcher.
   */
@@ -138,7 +138,6 @@ struct SeriesMatcher : SeriesMatcherBase {
   size_t index_memory_use() const;
 
   size_t pool_memory_use() const;
-
 };
 
 
@@ -163,7 +162,7 @@ struct PlainSeriesMatcher : SeriesMatcherBase {
   std::vector<SeriesNameT> names;      //! List of recently added names
   mutable std::mutex       mutex;      //! Mutex for shared data
 
-  PlainSeriesMatcher(i64 starting_id=FASTSTDB_STARTING_SERIES_ID);
+  PlainSeriesMatcher(i64 starting_id = FASTSTDB_STARTING_SERIES_ID);
 
   /** Add new string to matcher.
   */

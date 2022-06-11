@@ -23,6 +23,9 @@
 #include <unordered_set>
 #include <vector>
 
+#include <tsl/robin_map.h>
+#include <tsl/robin_set.h>
+
 #include "faststdb/common/basic.h"
 
 namespace faststdb {
@@ -36,7 +39,6 @@ struct StringPoolOffset {
 };
 
 struct LegacyStringPool {
-  
   typedef std::pair<const char*, int> StringT;
   const int MAX_BIN_SIZE = LIMITS_MAX_SNAME * 0x1000;
 
@@ -97,6 +99,14 @@ class StringPool {
   size_t mem_used() const;
 };
 
+#ifdef USE_STD_HASHMAP
+#define MapClass std::unordered_map
+#define SetClass std::unordered_set
+#else
+#define MapClass tsl::robin_map
+#define SetClass tsl::robin_set
+#endif
+
 struct StringTools {
   //! Pooled string
   typedef std::pair<const char*, int> StringT;
@@ -104,29 +114,27 @@ struct StringTools {
   static size_t hash(StringT str);
   static bool equal(StringT lhs, StringT rhs);
 
-  typedef std::unordered_map<StringT, i64, decltype(&StringTools::hash),
-          decltype(&StringTools::equal)>
-              TableT;
-
-  typedef std::unordered_set<StringT, decltype(&StringTools::hash), decltype(&StringTools::equal)> SetTBase;
-  
-  struct SetT : public SetTBase {
-    SetT(size_t size = 0) : SetTBase(0, StringTools::hash, StringTools::equal) { }
+  struct Hash {
+    std::size_t operator()(StringT const& str) const noexcept {
+      return StringTools::hash(str);
+    }
   };
 
-  typedef std::unordered_map<StringT, SetT, decltype(&StringTools::hash), decltype(&StringTools::equal)> L2TableT;
+  struct EqualTo {
+    bool operator()(const StringT& lhs, const StringT& rhs) const {
+      return StringTools::equal(lhs, rhs);
+    }
+  };
 
-  typedef std::unordered_map<StringT, L2TableT, decltype(&StringTools::hash), decltype(&StringTools::equal)> L3TableT;
-
-  //! Inverted table type (id to string mapping)
-  typedef std::unordered_map<i64, StringT> InvT;
+  typedef MapClass<StringT, i64, StringTools::Hash, StringTools::EqualTo>      TableT;
+  typedef SetClass<StringT, StringTools::Hash, StringTools::EqualTo>           SetT;
+  typedef MapClass<StringT, SetT, StringTools::Hash, StringTools::EqualTo>     L2TableT;
+  typedef MapClass<StringT, L2TableT, StringTools::Hash, StringTools::EqualTo> L3TableT;
+  typedef MapClass<i64, StringT>      InvT;
 
   static TableT create_table(size_t size);
-
   static SetT create_set(size_t size);
-
   static L2TableT create_l2_table(size_t size_hint);
-
   static L3TableT create_l3_table(size_t size_hint);
 };
 

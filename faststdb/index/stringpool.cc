@@ -206,7 +206,7 @@ bool StringTools::equal(StringT lhs, StringT rhs) {
 }
 
 StringTools::TableT StringTools::create_table(size_t size) {
-  return TableT(size, &StringTools::hash, &StringTools::equal);
+  return TableT(size);
 }
 
 StringTools::SetT StringTools::create_set(size_t size) {
@@ -214,12 +214,13 @@ StringTools::SetT StringTools::create_set(size_t size) {
 }
 
 StringTools::L2TableT StringTools::create_l2_table(size_t size_hint) {
-  return L2TableT(size_hint, &StringTools::hash, &StringTools::equal);
+  return L2TableT(size_hint);
 }
 
 StringTools::L3TableT StringTools::create_l3_table(size_t size_hint) {
-  return L3TableT(size_hint, &StringTools::hash, &StringTools::equal);
+  return L3TableT(size_hint);
 }
 
 }  // namespace faststdb
+
 
