@@ -209,16 +209,32 @@ StringTools::TableT StringTools::create_table(size_t size) {
   return TableT(size);
 }
 
+StringTools::TableTPtr StringTools::create_table_ptr(size_t size) {
+  return TableTPtr(new TableT(size));
+}
+
 StringTools::SetT StringTools::create_set(size_t size) {
   return SetT(size);
+}
+
+StringTools::SetTPtr StringTools::create_set_ptr(size_t size) {
+  return SetTPtr(new SetT(size));
 }
 
 StringTools::L2TableT StringTools::create_l2_table(size_t size_hint) {
   return L2TableT(size_hint);
 }
 
+StringTools::L2TableTPtr StringTools::create_l2_table_ptr(size_t size_hint) {
+  return L2TableTPtr(new L2TableT(size_hint));
+}
+
 StringTools::L3TableT StringTools::create_l3_table(size_t size_hint) {
   return L3TableT(size_hint);
+}
+
+StringTools::L3TableTPtr StringTools::create_l3_table_ptr(size_t size_hint) {
+  return L3TableTPtr(new L3TableT(size_hint));
 }
 
 }  // namespace faststdb

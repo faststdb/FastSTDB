@@ -294,6 +294,14 @@ CompressedPListConstIterator CompressedPList::end() const {
   return CompressedPListConstIterator(buffer_, cardinality_, false);
 }
 
+std::string CompressedPList::debug_string() const {
+  std::stringstream ss;
+  for (auto iter = begin(); iter != end(); ++iter) {
+    ss << *iter << " ";
+  }
+  return ss.str();
+}
+
 CMSketch::CMSketch(u32 M)
     : N(3)
     , mask_(M-1)
@@ -341,14 +349,22 @@ CMSketch::TVal CMSketch::extract(u64 value) const {
 InvertedIndex::InvertedIndex(u32) { }
 
 void InvertedIndex::add(u64 key, u64 value) {
-  table_[key].add(value);
+  auto iter = table_.find(key);
+  std::shared_ptr<TVal> val;
+  if (iter == table_.end()) {
+    val.reset(new TVal());
+    table_[key] = val;
+  } else {
+    val = table_[key];
+  }
+  val->add(value);
 }
 
 size_t InvertedIndex::get_size_in_bytes() const {
   size_t sum = 0;
   for (auto const& row: table_) {
     auto const& list = row.second;
-    sum += list.getSizeInBytes();
+    sum += list->getSizeInBytes();
   }
   return sum;
 }
@@ -359,7 +375,7 @@ InvertedIndex::TVal InvertedIndex::extract(u64 value) const {
     // Return empty value
     return TVal();
   }
-  return it->second;
+  return *(it->second);
 }
 
 MetricName::MetricName(const char* begin, const char* end)
@@ -544,12 +560,17 @@ IndexQueryResultsIterator IndexQueryResults::end() const {
   return IndexQueryResultsIterator(postinglist_.end(), spool_);
 }
 
+std::string IndexQueryResults::debug_string() const {
+  return postinglist_.debug_string();
+}
+
 IndexQueryResults IncludeIfAllTagsMatch::query(IndexBase const& index) const {
   IndexQueryResults results = index.metric_query(metric_);
   for(auto const& tv: pairs_) {
     auto res = index.tagvalue_query(tv);
     results = results.intersection(res);
   }
+
   return results.filter(metric_).filter(pairs_);
 }
 
@@ -643,7 +664,7 @@ void SeriesNameTopology::add_name(StringT name) {
   StringT tags = std::make_pair(name.first + metric.second, name.second - metric.second);
   auto it = index_.find(metric);
   if (it == index_.end()) {
-    StringTools::L2TableT tagtable = StringTools::create_l2_table(1024);
+    auto tagtable = StringTools::create_l2_table_ptr(1024);
     index_[metric] = std::move(tagtable);
     it = index_.find(metric);
   }
@@ -665,16 +686,16 @@ void SeriesNameTopology::add_name(StringT name) {
     if (!split_pair(tagstr, &tag, &val)) {
       error = true;
     }
-    StringTools::L2TableT& tagtable = *const_cast<StringTools::L2TableT*>(&it->second);  // compatable with tsl::robin_map/set
-    auto tagit = tagtable.find(tag);
-    if (tagit == tagtable.end()) {
-      auto valtab = StringTools::create_set(1024);
-      //tagtable.insert({tag, valtab});
-      tagtable[tag] = valtab; std::move(valtab);
-      tagit = tagtable.find(tag);
+    auto tagtable = it->second;
+    auto tagit = tagtable->find(tag);
+    if (tagit == tagtable->end()) {
+      auto valtab = StringTools::create_set_ptr(1024);
+      // tagtable.insert({tag, valtab});
+      (*tagtable)[tag] = valtab;  // std::move(valtab);
+      tagit = tagtable->find(tag);
     }
-    StringTools::SetT& valueset = *const_cast<StringTools::SetT*>(&tagit->second);  // compatable with tsl::robin_map/set
-    valueset.insert(val);
+    auto valueset = tagit->second;
+    valueset->insert(val);
     // next
     p = skip_space(tag_end, end);
   }
@@ -683,7 +704,7 @@ void SeriesNameTopology::add_name(StringT name) {
 std::vector<StringT> SeriesNameTopology::list_metric_names() const {
   std::vector<StringT> res;
   std::transform(index_.begin(), index_.end(), std::back_inserter(res),
-                 [](std::pair<StringT, StringTools::L2TableT> const& v) {
+                 [](std::pair<StringT, StringTools::L2TableTPtr> const& v) {
                    return v.first;
                  });
   return res;
@@ -695,8 +716,8 @@ std::vector<StringT> SeriesNameTopology::list_tags(StringT metric) const {
   if (it == index_.end()) {
     return res;
   }
-  std::transform(it->second.begin(), it->second.end(), std::back_inserter(res),
-                 [](std::pair<StringT, StringTools::SetT> const& v) {
+  std::transform(it->second->begin(), it->second->end(), std::back_inserter(res),
+                 [](std::pair<StringT, StringTools::SetTPtr> const& v) {
                     return v.first;
                  });
   return res;
@@ -708,12 +729,12 @@ std::vector<StringT> SeriesNameTopology::list_tag_values(StringT metric, StringT
   if (it == index_.end()) {
     return res;
   }
-  auto vit = it->second.find(tag);
-  if (vit == it->second.end()) {
+  auto vit = it->second->find(tag);
+  if (vit == it->second->end()) {
     return res;
   }
   const auto& set = vit->second;
-  std::copy(set.begin(), set.end(), std::back_inserter(res));
+  std::copy(set->begin(), set->end(), std::back_inserter(res));
   return res;
 }
 
