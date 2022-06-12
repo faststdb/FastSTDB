@@ -1394,8 +1394,7 @@ std::tuple<common::Status, std::unique_ptr<IQueryPlan>> QueryPlanBuilder::create
     // Group aggregate query
     if (req.select.columns.size() == 1) {
       return group_aggregate_query_plan(req);
-    }
-    else {
+    } else {
       return join_query_plan(req);
     }
   } else if (req.agg.enabled == false && req.select.columns.size() > 1) {
@@ -1431,7 +1430,7 @@ void QueryPlanExecutor::execute(const storage::ColumnStore& cstore, std::unique_
     }
 
     size_t pos = 0;
-    while(pos < size) {
+    while (pos < size) {
       Sample const* sample = reinterpret_cast<Sample const*>(dest.data() + pos);
       if (!qproc.put(*sample)) {
         LOG(INFO) << "Iteration stopped by client";

@@ -15,8 +15,7 @@
 namespace faststdb {
 namespace qp {
 
-static std::unordered_map<std::string, int> buildNameToIndexMapping(const qp::ReshapeRequest& req)
-{
+static std::unordered_map<std::string, int> buildNameToIndexMapping(const qp::ReshapeRequest& req) {
   std::unordered_map<std::string, int> result;
   const int ncol = static_cast<int>(req.select.columns.size());
   const SeriesMatcherBase* matcher = req.select.global_matcher;
@@ -53,8 +52,7 @@ struct MuparserEvalImpl : Node {
 
   static std::string preProcessExpression(std::string input,
                                           const ReshapeRequest& req,
-                                          std::map<std::string, std::string>* varmap)
-  {
+                                          std::map<std::string, std::string>* varmap) {
     std::vector<std::string> vars;
     for (auto const& col: req.select.columns) {
       if (col.ids.empty()) {
@@ -82,8 +80,7 @@ struct MuparserEvalImpl : Node {
   MuparserEvalImpl(const boost::property_tree::ptree& ptree,
                    const ReshapeRequest&              req,
                    std::shared_ptr<Node>              next)
-      : next_(next)
-  {
+      : next_(next) {
     std::unordered_map<std::string, int> fields = buildNameToIndexMapping(req);
     std::map<std::string, std::string> varmap;
     auto const& expr = ptree.get_child_optional("expr");
@@ -93,6 +90,7 @@ struct MuparserEvalImpl : Node {
         parser_.EnableOptimizer(true);
         auto str = expr->get_value<std::string>("");
         auto pstr = preProcessExpression(str, req, &varmap);
+        DLOG(INFO) << "mu expr=" << pstr;
         parser_.SetExpr(pstr);
         used = parser_.GetUsedVar();
       } catch (mu::ParserError const& error) {
@@ -102,8 +100,7 @@ struct MuparserEvalImpl : Node {
             << " message: " << error.GetMsg();
         QueryParserError qerr(msg.str());
       }
-    }
-    else {
+    } else {
       QueryParserError err("'expr' field required");
       BOOST_THROW_EXCEPTION(err);
     }
@@ -129,8 +126,7 @@ struct MuparserEvalImpl : Node {
       if (!defined.count(kv.first)) {
         if (!error) {
           msg << kv.first;
-        }
-        else {
+        } else {
           msg << ", " << kv.first;
         }
         error = true;
