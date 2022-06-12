@@ -78,6 +78,180 @@ TEST(TestCompressedPList, Test_3) {
   }
 }
 
+TEST(TestInvertedIndex, Test_1) {
+  InvertedIndex inverted_index(1);
+  for (auto i = 0; i < 100; ++i) {
+    inverted_index.add(i + 1, i + 1);
+  }
+  inverted_index.add(20, 30000);
+
+  auto z = inverted_index.extract(20);
+  EXPECT_STREQ("20 30000 ", z.debug_string().c_str());
+}
+
+TEST(TestIndex, Test_1) {
+  Index index;
+  {
+    const char* series = "metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5";
+    auto ret = index.append(series, series + strlen(series));
+    EXPECT_EQ(common::Status::Ok(), std::get<0>(ret));
+  }
+  {
+    const char* series = "metric1 tag1=1";
+    auto ret = index.append(series, series + strlen(series));
+    EXPECT_EQ(common::Status::Ok(), std::get<0>(ret));
+  }
+  {
+    const char* series = "metric tag1=2 tag2=2";
+    auto ret = index.append(series, series + strlen(series));
+    EXPECT_EQ(common::Status::Ok(), std::get<0>(ret));
+  }
+
+  // IncludeIfAllTagsMatch unit-test-1
+  {
+    std::vector<TagValuePair> tag_value_pairs;
+    MetricName metric_name("metric");
+    tag_value_pairs.emplace_back(TagValuePair("tag1=2"));
+    IncludeIfAllTagsMatch include_all_tags_match(metric_name, tag_value_pairs.begin(), tag_value_pairs.end());
+    auto index_query_results = include_all_tags_match.query(index);
+    auto begin = index_query_results.begin();
+    auto end = index_query_results.end();
+    EXPECT_EQ(1, index_query_results.cardinality());
+    for (; begin != end; ++begin) {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=2 tag2=2", ss.str().c_str());
+    }
+  }
+
+  // IncludeIfAllTagsMatch unit-test-2
+  {
+    std::vector<TagValuePair> tag_value_pairs;
+    MetricName metric_name("metric");
+    IncludeIfAllTagsMatch include_all_tags_match(metric_name, tag_value_pairs.begin(), tag_value_pairs.end());
+    auto index_query_results = include_all_tags_match.query(index);
+    EXPECT_EQ(0, index_query_results.cardinality());
+  }
+
+  // IncludeIfAllTagsMatch unit-test-3
+  {
+    std::vector<TagValuePair> tag_value_pairs;
+    MetricName metric_name("metric");
+    tag_value_pairs.emplace_back("tag2=2");
+    IncludeIfAllTagsMatch include_all_tags_match(metric_name, tag_value_pairs.begin(), tag_value_pairs.end());
+    auto index_query_results = include_all_tags_match.query(index);
+    EXPECT_EQ(2, index_query_results.cardinality());
+    auto begin = index_query_results.begin();
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5", ss.str().c_str());
+    }
+    ++begin;
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=2 tag2=2", ss.str().c_str());
+    }
+  }
+
+  // IncludeMany2Many unit-test-1 
+  {
+    std::map<std::string, std::vector<std::string>> tag_map;
+    tag_map["tag1"].emplace_back("1");
+    tag_map["tag1"].emplace_back("2");
+    IncludeMany2Many include_many2many("metric", tag_map);
+    auto index_query_results = include_many2many.query(index);
+    // LOG(INFO) << "size=" << index_query_results.cardinality();
+    EXPECT_EQ(2, index_query_results.cardinality());
+    auto begin = index_query_results.begin();
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5", ss.str().c_str());
+    }
+    ++begin;
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=2 tag2=2", ss.str().c_str());
+    }
+  }
+
+  // IncludeIfHasTag unit-test-1
+  {
+    std::vector<std::string> tags = { "tag1" };
+    IncludeIfHasTag include_if_has_tag("metric", tags);
+    auto index_query_results = include_if_has_tag.query(index);
+    EXPECT_EQ(2, index_query_results.cardinality());
+    auto begin = index_query_results.begin();
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5", ss.str().c_str());
+    }
+    ++begin;
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=2 tag2=2", ss.str().c_str());
+    }
+  }
+
+  // IncludeIfHasTag unit-test-2
+  {
+    std::vector<std::string> tags = { "tag3" };
+    IncludeIfHasTag include_if_has_tag("metric", tags);
+    auto index_query_results = include_if_has_tag.query(index);
+    EXPECT_EQ(1, index_query_results.cardinality());
+    auto begin = index_query_results.begin();
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5", ss.str().c_str());
+    }
+  }
+
+  // ExcludeTags unit-test-2 
+  {
+    std::vector<TagValuePair> tag_value_pairs;
+    tag_value_pairs.emplace_back("tag1=1");
+    ExcludeTags exclude_tags("metric", tag_value_pairs.begin(), tag_value_pairs.end());
+    auto index_query_results = exclude_tags.query(index);
+    EXPECT_EQ(1, index_query_results.cardinality());
+    auto begin = index_query_results.begin();
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=2 tag2=2", ss.str().c_str());
+    }
+  }
+
+  // JoinByTags unit-test-1 
+  {
+    std::vector<MetricName> metrics;
+    std::vector<TagValuePair> tag_value_pairs;
+    metrics.emplace_back("metric");
+    tag_value_pairs.emplace_back("tag1=2");
+    tag_value_pairs.emplace_back("tag2=2");
+    JoinByTags join_by_tags(metrics.begin(), metrics.end(), tag_value_pairs.begin(), tag_value_pairs.end());
+    auto index_query_results = join_by_tags.query(index);
+    EXPECT_EQ(2, index_query_results.cardinality());
+    auto begin = index_query_results.begin();
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5", ss.str().c_str());
+    }
+    ++begin;
+    {
+      std::stringstream ss;
+      ss << *begin;
+      EXPECT_STREQ("metric tag1=2 tag2=2", ss.str().c_str());
+    }
+  }
+}
+
 TEST(TestSeriesNameTopology, Test_1) {
   SeriesNameTopology series_name_topology;
   const char* series = "metric tag1=1 tag2=2 tag3=3 tag4=4 tag5=5";

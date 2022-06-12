@@ -18,6 +18,7 @@
 
 #include <atomic>
 #include <deque>
+#include <iostream>
 #include <mutex>
 #include <unordered_map>
 #include <unordered_set>
@@ -65,6 +66,10 @@ struct LegacyStringPool {
 };
 
 typedef std::pair<const char*, u32> StringT;
+inline std::ostream& operator<<(std::ostream& os, const StringT& data) {
+  os << std::string(data.first, data.second);
+  return os;
+}
 
 class StringPool {
  public:
@@ -127,15 +132,23 @@ struct StringTools {
   };
 
   typedef MapClass<StringT, i64, StringTools::Hash, StringTools::EqualTo>      TableT;
+  typedef std::shared_ptr<TableT> TableTPtr;
   typedef SetClass<StringT, StringTools::Hash, StringTools::EqualTo>           SetT;
-  typedef MapClass<StringT, SetT, StringTools::Hash, StringTools::EqualTo>     L2TableT;
-  typedef MapClass<StringT, L2TableT, StringTools::Hash, StringTools::EqualTo> L3TableT;
+  typedef std::shared_ptr<SetT> SetTPtr;
+  typedef MapClass<StringT, SetTPtr, StringTools::Hash, StringTools::EqualTo>     L2TableT;
+  typedef std::shared_ptr<L2TableT> L2TableTPtr;
+  typedef MapClass<StringT, L2TableTPtr, StringTools::Hash, StringTools::EqualTo> L3TableT;
+  typedef std::shared_ptr<L3TableT> L3TableTPtr;
   typedef MapClass<i64, StringT>      InvT;
 
   static TableT create_table(size_t size);
+  static TableTPtr create_table_ptr(size_t size);
   static SetT create_set(size_t size);
+  static SetTPtr create_set_ptr(size_t size); 
   static L2TableT create_l2_table(size_t size_hint);
+  static L2TableTPtr create_l2_table_ptr(size_t size_hint);
   static L3TableT create_l3_table(size_t size_hint);
+  static L3TableTPtr create_l3_table_ptr(size_t size_hint);
 };
 
 }  // namespace faststdb

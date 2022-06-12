@@ -409,6 +409,8 @@ class CompressedPList {
   CompressedPListConstIterator begin() const;
 
   CompressedPListConstIterator end() const;
+
+  std::string debug_string() const;
 };
 
 class CMSketch {
@@ -435,7 +437,8 @@ class CMSketch {
 
 class InvertedIndex {
   typedef CompressedPList TVal;
-  std::unordered_map<u64, TVal> table_;
+  // std::unordered_map<u64, TVal> table_;
+  MapClass<u64, std::shared_ptr<TVal>> table_;
 
  public:
   InvertedIndex(u32);
@@ -597,6 +600,8 @@ class IndexQueryResults {
   IndexQueryResultsIterator begin() const;
 
   IndexQueryResultsIterator end() const;
+
+  std::string debug_string() const;
 };
 
 struct IndexBase {
@@ -640,7 +645,7 @@ struct IncludeIfAllTagsMatch : IndexQueryNodeBase {
   MetricName metric_;
   std::vector<TagValuePair> pairs_;
 
-  template<class Iter>
+  template <class Iter>
   IncludeIfAllTagsMatch(MetricName const& metric, Iter begin, Iter end)
       : IndexQueryNodeBase(node_name_)
         , metric_(metric)
