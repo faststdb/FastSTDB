@@ -54,3 +54,22 @@ cc_library(
   ],
 )
 
+cc_test(
+  name = "queryprocessor_framework_test",
+  srcs = ["queryprocessor_framework_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    "//faststdb/query:query",
+  ],
+)
+
+cc_test(
+  name = "eval_test",
+  srcs = ["query_processing/eval_test.cc"],
+  deps = [
+    "@gtest//:gtest",
+    "@gtest//:gtest_main",
+    "//faststdb/query:query",
+  ],
+)

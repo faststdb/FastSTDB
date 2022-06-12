@@ -26,12 +26,12 @@ namespace faststdb {
  *  in FastSTDB. Must be used only inside library.
  */
 struct InternalCursor {
-    //! Send offset to caller
-    virtual bool put(Sample const& offset) = 0;
-    virtual void complete() = 0;
-    //! Set error and stop execution
-    virtual void set_error(common::Status error_code) = 0;
-    virtual void set_error(common::Status error_code, const char* error_message) = 0;
+  //! Send offset to caller
+  virtual bool put(Sample const& offset) = 0;
+  virtual void complete() = 0;
+  //! Set error and stop execution
+  virtual void set_error(common::Status error_code) = 0;
+  virtual void set_error(common::Status error_code, const char* error_message) = 0;
 };
 
 }  // namespace faststdb
