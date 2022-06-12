@@ -18,6 +18,8 @@
 
 #include "gtest/gtest.h"
 
+#include "faststdb/index/seriesparser.h"
+
 namespace faststdb {
 
 StringPool stringpool;
@@ -261,6 +263,206 @@ TEST(TestSeriesNameTopology, Test_1) {
   EXPECT_EQ(1, list_metric_names.size());
   EXPECT_STREQ("metric", std::string(list_metric_names[0].first, list_metric_names[0].second).c_str());
   EXPECT_EQ(6, list_metric_names[0].second);
+}
+
+TEST(TestIndex, Test_index_0) {
+  SeriesMatcher matcher(10ul);
+  std::vector<std::string> names = {
+    "foo tagA=1 tagB=1",
+    "foo tagA=1 tagB=2",
+    "foo tagA=1 tagB=3",
+    "foo tagA=1 tagB=4",
+    "foo tagA=2 tagB=1",
+    "foo tagA=2 tagB=2",
+    "foo tagA=2 tagB=3",
+    "foo tagA=2 tagB=4",
+  };
+  std::vector<u64> ids;
+  for (auto name: names) {
+    auto id = matcher.add(name.data(), name.data() + name.size());
+    EXPECT_TRUE(id != 0);
+    ids.push_back(id);
+  }
+  MetricName mname("foo");
+  std::vector<TagValuePair> tags = {
+    TagValuePair("tagA=1")
+  };
+  IncludeIfAllTagsMatch query(mname, tags.begin(), tags.end());
+  auto res = matcher.search(query);
+  EXPECT_EQ(4, res.size());
+  int i = 0;
+  u64 exp_id = 10ul;
+  for (auto tup: res) {
+    const char* name;
+    int size;
+    u64 id;
+    std::tie(name, size, id) = tup;
+    EXPECT_STREQ(std::string(name, name + size).c_str(), names[i].c_str());
+    EXPECT_EQ(id, exp_id);
+    i++;
+    exp_id++;
+  }
+}
+
+TEST(TestIndex, Test_index_1) {
+  u64 base_id = 10ul;
+  SeriesMatcher matcher(base_id);
+  std::vector<std::string> names = {
+    "foo tagA=1 tagB=1",
+    "foo tagA=1 tagB=2",
+    "foo tagA=1 tagB=3",
+    "foo tagA=1 tagB=4",
+    "foo tagA=2 tagB=1",
+    "foo tagA=2 tagB=2",
+    "foo tagA=2 tagB=3",
+    "foo tagA=2 tagB=4",
+  };
+  std::vector<u64> ids;
+  for (auto name: names) {
+    auto id = matcher.add(name.data(), name.data() + name.size());
+    EXPECT_TRUE(id != 0);
+    ids.push_back(id);
+  }
+  MetricName mname("foo");
+  std::vector<TagValuePair> tags = {
+    TagValuePair("tagA=2"),
+    TagValuePair("tagB=3")
+  };
+
+  IncludeIfAllTagsMatch query(mname, tags.begin(), tags.end());
+  auto res = matcher.search(query);
+  EXPECT_EQ(1, res.size());
+  int i = 0;
+  std::vector<u64> offsets = {
+    6,
+  };
+  for (auto tup: res) {
+    const char* name;
+    int size;
+    u64 id;
+    std::tie(name, size, id) = tup;
+    std::string exp_name = names[offsets[i]];
+    EXPECT_STREQ(std::string(name, name + size).c_str(), exp_name.c_str());
+    EXPECT_EQ(id, base_id + offsets[i]);
+    i++;
+  }
+}
+
+TEST(TestIndex, Test_index_2) {
+  u64 base_id = 10ul;
+  SeriesMatcher matcher(base_id);
+  std::vector<std::string> names = {
+    "foo tagA=1 tagB=1",
+    "foo tagA=1 tagB=2",
+    "foo tagA=1 tagB=3",
+    "foo tagA=1 tagB=4",
+    "foo tagA=2 tagB=1",
+    "foo tagA=2 tagB=2",
+    "foo tagA=2 tagB=3",
+    "foo tagA=2 tagB=4",
+  };
+  std::vector<u64> ids;
+  for (auto name: names) {
+    auto id = matcher.add(name.data(), name.data() + name.size());
+    EXPECT_TRUE(id != 0);
+    ids.push_back(id);
+  }
+  MetricName mname("bar");
+  std::vector<TagValuePair> tags = {
+    TagValuePair("tagA=1"),
+  };
+
+  IncludeIfAllTagsMatch query(mname, tags.begin(), tags.end());
+  auto res = matcher.search(query);
+  EXPECT_EQ(0, res.size());
+}
+
+TEST(TestIndex, Test_index_3) {
+  u64 base_id = 10ul;
+  SeriesMatcher matcher(base_id);
+  std::vector<std::string> names = {
+    "foo tagA=1 tagB=1 tagC=2",
+    "foo tagA=1 tagB=2 tagD=1",
+    "foo tagA=1 tagB=3 tagC=8",
+    "foo tagA=1 tagB=4 tagC=2",
+    "foo tagA=2 tagB=1 tagC=3",
+    "foo tagA=2 tagB=2 tagD=0",
+    "foo tagA=2 tagB=3 tagC=9",
+    "foo tagA=2 tagB=4 tagC=4",
+  };
+  std::vector<u64> ids;
+  for (auto name: names) {
+    auto id = matcher.add(name.data(), name.data() + name.size());
+    EXPECT_TRUE(id != 0);
+    ids.push_back(id);
+  }
+  std::vector<TagValuePair> tags = {
+    TagValuePair("tagD=2"),
+  };
+  std::vector<std::string> qtags = {"tagD"};
+  IncludeIfHasTag query("foo", qtags);
+  auto res = matcher.search(query);
+  EXPECT_EQ(2, res.size());
+  int i = 0;
+  std::vector<u64> offsets = {
+    1,
+    5,
+  };
+  for (auto tup: res) {
+    const char* name;
+    int size;
+    u64 id;
+    std::tie(name, size, id) = tup;
+    std::string exp_name = names[offsets[i]];
+    EXPECT_STREQ(std::string(name, name + size).c_str(), exp_name.c_str());
+    EXPECT_EQ(id, base_id + offsets[i]);
+    i++;
+  }
+}
+
+TEST(TestIndex, Test_index_4) {
+  u64 base_id = 10ul;
+  SeriesMatcher matcher(base_id);
+  std::vector<std::string> names = {
+    "foo tagA=1 tagB=1",
+    "foo tagA=1 tagB=2",
+    "foo tagA=1 tagB=3",
+    "foo tagA=1 tagB=4",
+    "foo tagA=2 tagB=1",
+    "foo tagA=2 tagB=2",
+    "foo tagA=2 tagB=3",
+    "foo tagA=2 tagB=4",
+  };
+  std::vector<u64> ids;
+  for (auto name: names) {
+    auto id = matcher.add(name.data(), name.data() + name.size());
+    EXPECT_TRUE(id != 0);
+    ids.push_back(id);
+  }
+  std::string mname("foo");
+  std::map<std::string, std::vector<std::string>> tags = {
+    { "tagA", { "2" } },
+    { "tagB", { "2", "3" } },
+  };
+
+  IncludeMany2Many query(mname, tags);
+  auto res = matcher.search(query);
+  EXPECT_EQ(2, res.size());
+  int i = 0;
+  std::vector<u64> offsets = {
+    5,
+    6,
+  };
+  for (auto tup: res) {
+    const char* name;
+    int size;
+    u64 id;
+    std::tie(name, size, id) = tup;
+    std::string exp_name = names[offsets[i]];
+    EXPECT_STREQ(std::string(name, name + size).c_str(), exp_name.c_str());
+    EXPECT_EQ(id, base_id + offsets[i]);
+    i++;
+  }
 }
 
 }  // namespace faststdb
