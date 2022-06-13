@@ -307,8 +307,7 @@ static std::tuple<common::Status, std::string, ErrorMsg> parse_select_stmt(boost
     auto str = select->get_value<std::string>("");
     if (!str.empty() && str.front() != '!') {
       return std::make_tuple(common::Status::Ok(), str, ErrorMsg());
-    }
-    else {
+    } else {
       return std::make_tuple(common::Status::QueryParsingError(), "", "Metric name can't be empty or start with '!' symbol");
     }
   }
@@ -1328,7 +1327,7 @@ std::tuple<common::Status, ReshapeRequest, ErrorMsg> QueryParser::parse_select_q
     }
   }
 
-  std::tie(status, result.select.filters, result.select.filter_rule, error) = parse_filter(ptree, {metric});
+  std::tie(status, result.select.filters, result.select.filter_rule, error) = parse_filter(ptree, { metric });
   if (status != common::Status::Ok()) {
     return std::make_tuple(status, result, error);
   }
@@ -2051,6 +2050,7 @@ std::tuple<common::Status, std::vector<std::shared_ptr<Node>>, ErrorMsg> QueryPa
   std::shared_ptr<Node> terminal = std::make_shared<TerminalNode>(cursor);
   auto prev = terminal;
   std::vector<std::shared_ptr<Node>> result;
+  // LOG(INFO) << to_json(ptree, true).c_str();
 
   auto apply = ptree.get_child_optional("apply");
   if (apply) {
